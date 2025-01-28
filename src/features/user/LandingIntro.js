@@ -6,13 +6,14 @@ function LandingIntro(){
 
     return(
         <div className="hero min-h-full rounded-l-xl bg-base-200">
-            <div className="hero-content py-12">
+           <img src="review.png"  alt="Dashwind Admin Template" className="w-80 
+                   inline-block"></img>
+            <div className="hero-content py-10">
               <div className="max-w-md">
-
-              <h1 className='text-3xl text-center font-bold '>Dashboard</h1>
-
-                <div className="text-center mt-12"><img src="./intro.png" alt="Dashwind Admin Template" className="w-48 inline-block"></img></div>
+             </div>
               
+                <div className="text-center">
+                 
               {/* Importing pointers component */}
               {/* <TemplatePointers /> */}
               

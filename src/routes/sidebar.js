@@ -54,6 +54,13 @@ const routes = [
     icon: <VscFeedback className={iconClasses}/>, // icon component
     name: 'Feedback', // name that appear in Sidebar
   },
+  {
+    path: '/app/welcome', // url
+    icon: <VscFeedback className={iconClasses}/>, // icon component
+    name: 'Welcome', // name that appear in Sidebar
+  }, 
+      
+
   // {
   //   path: '/app/transactions', // url
   //   icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
@@ -85,11 +92,13 @@ const routes = [
         icon: <ArrowRightOnRectangleIcon className={submenuIconClasses}/>,
         name: 'Login',
       },
+
       {
         path: '/app/Register', //url
         icon: <UserIcon className={submenuIconClasses}/>, // icon component
         name: 'Register', // name that appear in Sidebar
       },
+
       {
         path: '/app/ChangePassword', //url
         icon: <UserIcon className={submenuIconClasses}/>, // icon component

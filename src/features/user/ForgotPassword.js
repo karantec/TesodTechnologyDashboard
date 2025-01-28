@@ -71,7 +71,8 @@ function ForgotPassword(){
                                 <ErrorText styleClass="mt-12">{errorMessage}</ErrorText>
                               <Link to="/Verify-otp">  <button type="submit" className={"btn mt-2 w-full btn-primary" + (loading ? " loading" : "")}>Send Reset Link</button>
                               </Link>
-                                <div className='text-center mt-4'>Don't have an account yet? <Link to="/register"><button className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Register</button></Link></div>
+                              <Link to="/"><button type="submit" className={"btn mt-2 w-full btn-primary" + (loading ? " loading" : "")}>Back</button>
+                              </Link>
                             </form>
                         </>
                     }
