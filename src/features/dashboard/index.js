@@ -1,78 +1,118 @@
-import DashboardStats from './components/DashboardStats'
-import AmountStats from './components/AmountStats'
-import PageStats from './components/PageStats'
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { FiSearch } from 'react-icons/fi';
 
-import UserGroupIcon  from '@heroicons/react/24/outline/UserGroupIcon'
-import UsersIcon  from '@heroicons/react/24/outline/UsersIcon'
-import CircleStackIcon  from '@heroicons/react/24/outline/CircleStackIcon'
-import CreditCardIcon  from '@heroicons/react/24/outline/CreditCardIcon'
-import UserChannels from './components/UserChannels'
-import LineChart from './components/LineChart'
-import BarChart from './components/BarChart'
-import DashboardTopBar from './components/DashboardTopBar'
-import { useDispatch } from 'react-redux'
-import {showNotification} from '../common/headerSlice'
-import DoughnutChart from './components/DoughnutChart'
-import { useState } from 'react'
+const DashboardMetric = ({ title, value, data }) => {
+  return (
+    <div className="bg-white rounded-2xl shadow-md p-4">
+      <h3 className="text-sm font-medium text-gray-500 mb-2">{title}</h3>
+      <p className="text-2xl font-bold mb-4">{value}</p>
+      <ResponsiveContainer width="100%" height={60}>
+        <LineChart data={data}>
+          <XAxis dataKey="name" hide />
+          <YAxis hide />
+          <Tooltip />
+          <Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={2} dot={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
 
-const statsData = [
-    {title : "New Users", value : "34.7k", icon : <UserGroupIcon className='w-8 h-8'/>, description : "↗︎ 2300 (22%)"},
-    {title : "Total Sales", value : "$34,545", icon : <CreditCardIcon className='w-8 h-8'/>, description : "Current month"},
-    {title : "Pending Leads", value : "450", icon : <CircleStackIcon className='w-8 h-8'/>, description : "50 in hot leads"},
-    {title : "Active Users", value : "5.6k", icon : <UsersIcon className='w-8 h-8'/>, description : "↙ 300 (18%)"},
-]
+const Dashboard = () => {
+  const metricsData = {
+    registeredClients: [
+      { name: 'Mon', value: 20 },
+      { name: 'Tue', value: 40 },
+      { name: 'Wed', value: 30 },
+      { name: 'Thu', value: 50 },
+      { name: 'Fri', value: 35 }
+    ],
+    companyP: [
+      { name: 'Mon', value: 15 },
+      { name: 'Tue', value: 25 },
+      { name: 'Wed', value: 20 },
+      { name: 'Thu', value: 35 },
+      { name: 'Fri', value: 30 }
+    ],
+    unusedClients: [
+      { name: 'Mon', value: 25 },
+      { name: 'Tue', value: 35 },
+      { name: 'Wed', value: 30 },
+      { name: 'Thu', value: 45 },
+      { name: 'Fri', value: 20 }
+    ],
+    assetsRelated: [
+      { name: 'Mon', value: 10 },
+      { name: 'Tue', value: 18 },
+      { name: 'Wed', value: 22 },
+      { name: 'Thu', value: 25 },
+      { name: 'Fri', value: 30 }
+    ]
+  };
 
+  return (
+    <div className="max-w-7xl mx-auto p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl font-semibold text-gray-800">Good Afternoon, Manish</h1>
+        <div className="relative w-64">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <input 
+            type="text" 
+            placeholder="Search" 
+            className="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <DashboardMetric 
+          title="Total Registered Clients" 
+          value="10" 
+          data={metricsData.registeredClients} 
+        />
+        <DashboardMetric 
+          title="Total Company P" 
+          value="₹2,50,000" 
+          data={metricsData.companyP} 
+        />
+        <DashboardMetric 
+          title="Total Unused Registered Client" 
+          value="5" 
+          data={metricsData.unusedClients} 
+        />
+        <DashboardMetric 
+          title="Total Assets Related" 
+          value="₹5,00,000" 
+          data={metricsData.assetsRelated} 
+        />
+      </div>
 
-function Dashboard(){
-
-    const dispatch = useDispatch()
- 
-
-    const updateDashboardPeriod = (newRange) => {
-        // Dashboard range changed, write code to refresh your values
-        dispatch(showNotification({message : `Period updated to ${newRange.startDate} to ${newRange.endDate}`, status : 1}))
-    }
-
-    return(
-        <>
-        {/** ---------------------- Select Period Content ------------------------- */}
-            <DashboardTopBar updateDashboardPeriod={updateDashboardPeriod}/>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-2xl shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Calendar</h3>
+          {/* Calendar component would go here */}
+        </div>
         
-        {/** ---------------------- Different stats content 1 ------------------------- */}
-            <div className="grid lg:grid-cols-4 mt-2 md:grid-cols-2 grid-cols-1 gap-6">
-                {
-                    statsData.map((d, k) => {
-                        return (
-                            <DashboardStats key={k} {...d} colorIndex={k}/>
-                        )
-                    })
-                }
-            </div>
-
-
-
-        {/** ---------------------- Different charts ------------------------- */}
-            <div className="grid lg:grid-cols-2 mt-4 grid-cols-1 gap-6">
-                <LineChart />
-                <BarChart />
-            </div>
-            
-        {/** ---------------------- Different stats content 2 ------------------------- */}
+        <div className="bg-white p-4 rounded-2xl shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Common Registration Form</h3>
+          {/* Registration form component would go here */}
+        </div>
         
-            <div className="grid lg:grid-cols-2 mt-10 grid-cols-1 gap-6">
-                <AmountStats />
-                <PageStats />
+        <div className="bg-white p-4 rounded-2xl shadow-md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Recent Activities</h3>
+            <div className="flex gap-2">
+              <button className="px-3 py-1 rounded-lg bg-blue-100 text-blue-600">Daily</button>
+              <button className="px-3 py-1 rounded-lg bg-gray-100">Weekly</button>
+              <button className="px-3 py-1 rounded-lg bg-gray-100">Monthly</button>
             </div>
+          </div>
+          {/* Activity list would go here */}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-        {/** ---------------------- User source channels table  ------------------------- */}
-        
-            <div className="grid lg:grid-cols-2 mt-4 grid-cols-1 gap-6">
-                <UserChannels />
-                <DoughnutChart />
-            </div>
-        </>
-    )
-}
-
-export default Dashboard
+export default Dashboard;
