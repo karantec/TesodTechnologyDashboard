@@ -83,7 +83,8 @@ function Login() {
                             </div>
 
                             <ErrorText styleClass="mt-6">{errorMessage}</ErrorText>
-                            <button type="submit" className={"btn mt-6 w-full btn-primary" + (loading ? " loading" : "")}>Login</button>
+                            <button type="submit" className={"btn mt-6 w-full bg-orange-500 text-white" + (loading ? " loading" : "")}>Login</button>
+
                         </form>
                     </div>
                 </div>
