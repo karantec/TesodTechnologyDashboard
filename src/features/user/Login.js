@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
-import { loginUser } from "../../app/api";
 
 function Login() {
-    const navigate = useNavigate(); // ✅ Initialize navigate
+    const navigate = useNavigate();
     const INITIAL_LOGIN_OBJ = {
         email: "",
         password: ""
@@ -16,7 +15,7 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState("");
     const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
 
-    const submitForm = async (e) => {
+    const submitForm = (e) => {
         e.preventDefault();
         setErrorMessage("");
         setLoading(true);
@@ -27,19 +26,12 @@ function Login() {
             setLoading(false);
             return setErrorMessage("Email and Password are required!");
         }
-
-        try {
-            // Use the loginUser function from the API utility file
-            const data = await loginUser(email, password);
-            console.log(data);
-            // ✅ Save token and navigate after successful login
-            navigate("/app/welcome"); // ✅ Navigate without reloading
-        } catch (error) {
-            // ❌ Handle API errors properly
-            setErrorMessage(error);
-        } finally {
+        
+        // Simulating successful login
+        setTimeout(() => {
+            navigate("/app/welcome");
             setLoading(false);
-        }
+        }, 1000);
     };
 
     const updateFormValue = ({ updateType, value }) => {
