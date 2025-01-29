@@ -1,5 +1,3 @@
-
-// Base URL for your backend API
 import axios from "axios";
 
 // Base URL for your backend API
@@ -13,58 +11,62 @@ const apiClient = axios.create({
     },
 });
 
-// Attach token to headers dynamically
-apiClient.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("authToken");
-        console.log("Token:", token);
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
+// Handle errors globally (optional)
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        return Promise.reject(error?.response?.data?.message || "Something went wrong");
+    }
 );
 
 // Authentication APIs
 export const loginUser = async (email, password) => {
     try {
-        const response = await apiClient.post('super-admin/auth/login', { email, password });
-        
-        if (response.data?.status && response.data?.data?._token) {
-            // Save token to localStorage
-            localStorage.setItem('authToken', response.data.data._token);
-            return response.data;
+        const response = await apiClient.post("super-admin/auth/login", { email, password });
+
+        // Check if login was successful
+        if (response.status === 200 && response.data.status) {
+            // Save the token and other user info to localStorage (or state if needed)
+            const { _token, name, email, roles } = response.data.data;
+            const token = _token;
+            localStorage.setItem("userName", name);  // Save token
+            localStorage.setItem("token", token); // Optionally store other data
+            localStorage.setItem("userEmail", email); 
+            localStorage.setItem("userRoles", JSON.stringify(roles));
+
+            return { status: true, message: response.data.message };
         } else {
-            throw new Error(response.data?.message || 'Login failed');
+            return { status: false, message: response.data.message || "Login failed" };
         }
     } catch (error) {
-        console.error("Error during login:", error.message || error);
-        throw error;
+        // Handle any errors that occur during the API request
+        return {
+            status: false,
+            message: error?.response?.data?.message || "Something went wrong",
+        };
     }
 };
 
+export const registerUser = async (userData) => {
+    const response = await apiClient.post("/auth/register", userData);
+    return response.data;
+};
+
+export const forgotPassword = async (email) => {
+    const response = await apiClient.post("/auth/forgot-password", { email });
+    return response.data;
+};
+
+export const resetPassword = async (otp, newPassword) => {
+    const response = await apiClient.post("/auth/reset-password", { otp, password: newPassword });
+    return response.data;
+};
+
+// Utility API: Fetch Privacy Policy
 export const fetchPrivacyPolicy = async () => {
-    try {
-        const token = localStorage.getItem('authToken');
-        console.log("Token retrieved:", token); // Log the token to verify it's there
-
-        if (token) {
-            const response = await apiClient.get('super-admin/utility/privacy', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            console.log("Privacy policy fetched:", response);
-            return response.data; // Assuming the API returns the privacy policy
-        } else {
-            throw new Error('No auth token found');
-        }
-    } catch (err) {
-        console.error("Error fetching privacy policy:", err.response?.data || err.message);
-        throw err;
-    }
+    const response = await apiClient.get("super-admin/utility/privacy");
+    return response.data; // Assuming the API returns an object with privacy policy content
 };
 
+// Export the Axios instance for general use
 export { apiClient };

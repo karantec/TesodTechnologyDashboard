@@ -1,39 +1,42 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import LandingIntro from "./LandingIntro";
+import { Link, useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
+import { loginUser } from "../../app/api";
 
 function Login() {
+    const navigate = useNavigate(); // ✅ Initialize navigate
+    const INITIAL_LOGIN_OBJ = {
+        email: "",
+        password: ""
+    };
+
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [loginObj, setLoginObj] = useState({ email: "", password: "" });
-
-    const navigate = useNavigate(); // ✅ Use useNavigate()
+    const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
 
     const submitForm = async (e) => {
         e.preventDefault();
         setErrorMessage("");
+        setLoading(true);
 
         const { email, password } = loginObj;
-        if (!email.trim()) return setErrorMessage("Email is required!");
-        if (!password.trim()) return setErrorMessage("Password is required!");
+
+        if (email.trim() === "" || password.trim() === "") {
+            setLoading(false);
+            return setErrorMessage("Email and Password are required!");
+        }
 
         try {
-            setLoading(true);
-            const response = await axios.post(
-                "http://44.211.243.116:30001/api/super-admin/auth/login",
-                { email, password },
-                { headers: { "Content-Type": "application/json" } }
-            );
-
-            // ✅ Save token & redirect
-            localStorage.setItem("token", response.data.token);
-            navigate("/app/welcome"); // Redirect to dashboard
-
+            // Use the loginUser function from the API utility file
+            const data = await loginUser(email, password);
+            console.log(data);
+            // ✅ Save token and navigate after successful login
+            navigate("/app/welcome"); // ✅ Navigate without reloading
         } catch (error) {
-            setErrorMessage(error.response?.data?.message || "Invalid credentials");
+            // ❌ Handle API errors properly
+            setErrorMessage(error);
         } finally {
             setLoading(false);
         }
@@ -45,19 +48,47 @@ function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-base-200 flex items-center">
-            <div className="card mx-auto w-full max-w-5xl shadow-xl">
-                <div className="grid md:grid-cols-2 grid-cols-1 bg-base-100 rounded-xl">
-                    <div>
-                        <LandingIntro />
+        <div className="min-h-screen bg-base-200 flex justify-center items-center">
+            <div className="card w-full max-w-xl shadow-xl bg-base-100 rounded-xl">
+                <div className="grid md:grid-cols-2 grid-cols-1">
+                    <div className="hidden md:block">
+                        <img src="Designer2.jpeg" alt="Dashwind Admin Template" className="w-full h-full object-cover rounded-l-xl"/>
                     </div>
                     <div className="py-24 px-10">
                         <h2 className="text-2xl font-semibold mb-2 text-center">Login</h2>
                         <form onSubmit={submitForm}>
-                            <InputText type="text" updateType="email" labelTitle="Email" updateFormValue={updateFormValue} />
-                            <InputText type="password" updateType="password" labelTitle="Password" updateFormValue={updateFormValue} />
+                            <div className="mb-4">
+                                <InputText
+                                    defaultValue={loginObj.email}
+                                    type="email"
+                                    updateType="email"
+                                    containerStyle="mt-4"
+                                    labelTitle="Email"
+                                    updateFormValue={updateFormValue}
+                                />
+                                <InputText
+                                    defaultValue={loginObj.password}
+                                    type="password"
+                                    updateType="password"
+                                    containerStyle="mt-4"
+                                    labelTitle="Password"
+                                    updateFormValue={updateFormValue}
+                                />
+                            </div>
+
+                            <div className="text-right text-primary">
+                                <Link to="/forgot-password">
+                                    <span className="text-sm inline-block hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
+                                        Forgot Password?
+                                    </span>
+                                </Link>
+                            </div>
+
                             <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>
-                            <button type="submit" className={"btn mt-2 w-full btn-primary" + (loading ? " loading" : "")}>
+                            <button 
+                                type="submit" 
+                                className={`btn mt-2 w-full bg-orange-500 text-white hover:bg-orange-600 ${loading ? "loading" : ""}`}
+                            >
                                 Login
                             </button>
                         </form>

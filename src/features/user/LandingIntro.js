@@ -6,8 +6,7 @@ function LandingIntro(){
 
     return(
         <div className="hero min-h-full rounded-l-xl bg-base-200">
-           <img src="review.png"  alt="Dashwind Admin Template" className="w-80 
-                   inline-block"></img>
+          
             <div className="hero-content py-10">
               <div className="max-w-md">
              </div>

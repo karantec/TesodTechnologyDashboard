@@ -5,15 +5,8 @@ import {Link, useNavigate} from 'react-router-dom'
 import TemplatePointers from '../../features/user/components/TemplatePointers'
 
 function InternalPage(){
-  const navigate = useNavigate();
 
-  useEffect(() => {
-      // Check for authentication token
-      if (!localStorage.getItem('authToken')) {
-        console.log('No token found');
-          navigate('/login'); // Redirect to login if not authenticated
-      }
-  }, [navigate]);
+ 
 
   return (
       <div className="hero h-4/5 bg-base-200">

@@ -40,6 +40,21 @@ const routes = [
     name: 'Campaign', // name that appear in Sidebar
   },
   {
+    path: '/app/finanace', // url
+    icon: <MdCampaign className={iconClasses}/>, // icon component
+    name: 'Finance Accounting', // name that appear in Sidebar
+  },
+  {
+    path: '/app/troubleshoot', // url
+    icon: <MdCampaign className={iconClasses}/>, // icon component
+    name: 'TroubleShooting', // name that appear in Sidebar
+  },
+  {
+    path: '/app/callback', // url
+    icon: <MdCampaign className={iconClasses}/>, // icon component
+    name: 'Callback Request', // name that appear in Sidebar
+  },
+  {
     path: '/app/RequestDemo', // url
     icon: <VscGitPullRequestNewChanges className={iconClasses}/>, // icon component
     name: 'RequestDemo', // name that appear in Sidebar
@@ -55,32 +70,13 @@ const routes = [
     name: 'Feedback', // name that appear in Sidebar
   },
   {
-    path: '/app/welcome', // url
-    icon: <VscFeedback className={iconClasses}/>, // icon component
+    path: '/app/welcome', //url
+    icon: <UserIcon className={submenuIconClasses}/>, // icon component
     name: 'Welcome', // name that appear in Sidebar
-  }, 
+  },
       
 
-  // {
-  //   path: '/app/transactions', // url
-  //   icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
-  //   name: 'Transactions', // name that appear in Sidebar
-  // },
-  // {
-  //   path: '/app/charts', // url
-  //   icon: <ChartBarIcon className={iconClasses}/>, // icon component
-  //   name: 'Analytics', // name that appear in Sidebar
-  // },
-  // {
-  //   path: '/app/integration', // url
-  //   icon: <BoltIcon className={iconClasses}/>, // icon component
-  //   name: 'Integration', // name that appear in Sidebar
-  // },
-  // {
-  //   path: '/app/calendar', // url
-  //   icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
-  //   name: 'Calendar', // name that appear in Sidebar
-  // },
+  
 
   {
     path: '', //no url needed as this has submenu
@@ -98,6 +94,7 @@ const routes = [
         icon: <UserIcon className={submenuIconClasses}/>, // icon component
         name: 'Register', // name that appear in Sidebar
       },
+    
 
       {
         path: '/app/ChangePassword', //url
@@ -152,6 +149,11 @@ const routes = [
         path: '/app/termofservice',
         icon: <TbLetterMSmall className={submenuIconClasses}/>,
         name: 'Terms and Conditions',
+      },
+      {
+        path: '/app/Faq',
+        icon: <TbLetterMSmall className={submenuIconClasses}/>,
+        name: 'FAQ',
       },
      
     ]

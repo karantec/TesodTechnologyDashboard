@@ -2,6 +2,10 @@
 
 import { lazy } from 'react'
 import FeedbackForm from '../features/Feedback'
+import FAQPage from '../features/settings/FAQ'
+import FinanceAccounting from '../features/leads copy'
+import TroubleShoot from '../features/leads copy 2'
+import CallBackRequest from '../features/leads copy 3'
 
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'))
 const Welcome = lazy(() => import('../pages/protected/Welcome'))
@@ -39,6 +43,18 @@ const routes = [
   {
     path: '/leads',
     component: Leads,
+  },
+  {
+    path: '/finanace',
+    component: FinanceAccounting,
+  },
+  {
+    path: '/troubleshoot',
+    component: TroubleShoot,
+  },
+  {
+    path: '/callback',
+    component: CallBackRequest,
   },
   {
     path: '/RequestDemo',
@@ -96,6 +112,10 @@ const routes = [
   {
     path: '/PrivacyPolicy',
     component: PrivacyPolicy,
+  },
+  {
+    path: '/Faq',
+    component: FAQPage,
   },
   {
     path: '/termofservice',
