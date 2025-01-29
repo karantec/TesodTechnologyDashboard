@@ -1,73 +1,66 @@
-import { useState, useEffect } from "react";
-import TitleCard from "../../../components/Cards/TitleCard";
-import { fetchPrivacyPolicy } from "../../../app/api";
+import { useEffect, useState } from 'react';
 
 function PrivacyPolicy() {
-    const [privacyData, setPrivacyData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [privacyData, setPrivacyData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        // Fetch privacy policy data from API
-        const fetchPrivacyPolicys = async () => {
-            try {
-                const response = await fetchPrivacyPolicy(); // Use the imported API function
-                setPrivacyData(response); // Assuming response contains the privacy policy text
-                setLoading(false);
-            } catch (err) {
-                setError(err.response?.data?.message || "Failed to load privacy policy"); // Handle errors gracefully
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchPrivacyPolicy = async () => {
+      const token = localStorage.getItem('token');  // Get the token from localStorage
+      if (!token) {
+        setError('User is not authenticated');
+        setLoading(false);
+        return;
+      }
 
-        fetchPrivacyPolicys();
-    }, []);
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/super-admin/utility/privacy`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,  // Add the token in the Authorization header
+          },
+        });
 
-    return (
-        <>
-            <TitleCard title="Privacy Policy" topMargin="mt-2">
-                <div className="px-6 py-4">
-                    {loading && <p>Loading...</p>}
-                    {error && <p className="text-red-500">{error}</p>}
-                    {privacyData && (
-                        <>
-                            <h2 className="text-xl font-bold mb-4">{privacyData.title || "Our Commitment to Privacy"}</h2>
-                            <p className="mb-4">{privacyData.description || "Your privacy is important to us."}</p>
+        const data = await response.json();
+        if (response.ok) {
+          setPrivacyData(data.data);  // Set the fetched privacy data
+        } else {
+          setError(data.message || 'Failed to fetch privacy policy');
+        }
+      } catch (err) {
+        setError('Error fetching privacy policy');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-                            {privacyData.sections?.map((section, index) => (
-                                <div key={index}>
-                                    <h3 className="text-lg font-semibold mt-6 mb-2">{section.heading}</h3>
-                                    {section.content ? (
-                                        <p className="mb-4">{section.content}</p>
-                                    ) : (
-                                        <ul className="list-disc ml-6 mb-4">
-                                            {section.listItems?.map((item, idx) => (
-                                                <li key={idx}>{item}</li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            ))}
+    fetchPrivacyPolicy();
+  }, []);
 
-                            <h3 className="text-lg font-semibold mt-6 mb-2">Contact Us</h3>
-                            <p>
-                                {privacyData.contact?.email && (
-                                    <>
-                                        Email:{" "}
-                                        <a href={`mailto:${privacyData.contact.email}`} className="text-blue-500">
-                                            {privacyData.contact.email}
-                                        </a>
-                                        <br />
-                                    </>
-                                )}
-                                {privacyData.contact?.phone && <>Phone: {privacyData.contact.phone}</>}
-                            </p>
-                        </>
-                    )}
-                </div>
-            </TitleCard>
-        </>
-    );
+  if (loading) {
+    return <div className="text-center text-lg font-semibold text-primary py-8">Loading Privacy Policy...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-lg font-semibold text-red-600 py-8">Error: {error}</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h2 className="text-3xl font-semibold text-center text-primary mb-6">Privacy Policy</h2>
+        {/* Render the HTML content */}
+        <div
+          className="prose prose-lg text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html: privacyData ? privacyData.content : 'No content available',
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default PrivacyPolicy;

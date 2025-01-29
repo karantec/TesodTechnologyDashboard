@@ -35,7 +35,7 @@ function Header() {
   // Logout function with API call
   async function logoutUser() {
     try {
-      await axios.post('/api/logout'); // Replace with your API endpoint
+      // await axios.post('/api/logout'); // Replace with your API endpoint
       localStorage.clear();
       navigate('/');
     } catch (error) {
