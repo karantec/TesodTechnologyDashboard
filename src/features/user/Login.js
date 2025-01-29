@@ -13,6 +13,7 @@ function Login() {
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ)
+    const [showPassword, setShowPassword] = useState(false)
 
     const submitForm = (e) => {
         e.preventDefault()
@@ -42,6 +43,10 @@ function Login() {
         setLoginObj({ ...loginObj, [updateType]: value })
     }
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword)
+    }
+
     return (
         <div className="min-h-screen bg-base-200 flex items-center justify-center py-8">
             <div className="card mx-auto w-full max-w-lg shadow-xl rounded-xl overflow-hidden">
@@ -66,14 +71,59 @@ function Login() {
                                     labelTitle="Username"
                                     updateFormValue={updateFormValue}
                                 />
-                                <InputText
-                                    defaultValue={loginObj.password}
-                                    type="password"
-                                    updateType="password"
-                                    containerStyle="mt-4"
-                                    labelTitle="Password"
-                                    updateFormValue={updateFormValue}
-                                />
+                                <div className="relative mt-4">
+                                    <InputText
+                                        defaultValue={loginObj.password}
+                                        type={showPassword ? "text" : "password"}
+                                        updateType="password"
+                                        containerStyle="mt-4"
+                                        labelTitle="Password"
+                                        updateFormValue={updateFormValue}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute top-1/2 mt-4 right-3 transform -translate-y-1/2"
+                                        onClick={togglePasswordVisibility}
+                                    >
+                                        {showPassword ? (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                className="w-6 h-6 text-gray-600"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"
+                                                />
+                                            </svg>
+                                        ) : (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                className="w-6 h-6 text-gray-600"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M15 12l-3.354-3.354M12 4a9 9 0 00-9 9c0 3.034 1.517 5.88 4.243 7.657"
+                                                />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className='text-right text-primary'>
