@@ -1,51 +1,71 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import LandingIntro from './LandingIntro'
-import ErrorText from '../../components/Typography/ErrorText'
-import InputText from '../../components/Input/InputText'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import LandingIntro from './LandingIntro';
+import ErrorText from '../../components/Typography/ErrorText';
+import InputText from '../../components/Input/InputText';
 
 function Login() {
     const INITIAL_LOGIN_OBJ = {
         username: "",
         password: ""
-    }
+    };
 
-    const [loading, setLoading] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
-    const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ)
-    const [showPassword, setShowPassword] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
-    const submitForm = (e) => {
-        e.preventDefault()
-        setErrorMessage("")
+    // Get the base_url from environment variable
+    const loginApiUrl = `${process.env.REACT_APP_BASE_URL}/super-admin/auth/login`;
 
-        const { username, password } = loginObj
+    const submitForm = async (e) => {
+        e.preventDefault();
+        setErrorMessage("");
+        
+        const { username, password } = loginObj;
 
-        if (username.trim() === "") return setErrorMessage("Username is required!")
-        if (password.trim() === "") return setErrorMessage("Password is required!")
+        // Basic validation
+        if (username.trim() === "") return setErrorMessage("Username is required!");
+        if (password.trim() === "") return setErrorMessage("Password is required!");
 
-        // Custom login validation
-        if (username !== "vb@yopmail.com" || password !== "Test@123") {
-            return setErrorMessage("Invalid username or password!")
+        setLoading(true);
+        
+        try {
+            // API call to authenticate the user
+            const response = await fetch(loginApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: username, password: password }), // Modify if required by API
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Save the token in localStorage
+                localStorage.setItem("token", data.data._token);
+                // Navigate to the dashboard after successful login
+                navigate('/app/welcome');
+            } else {
+                setErrorMessage(data.message || "An error occurred during login.");
+            }
+        } catch (error) {
+            setErrorMessage("Network error. Please try again later.");
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(true)
-        setTimeout(() => {
-            setLoading(false)
-            // Save token or any flag in localStorage (if needed)
-            localStorage.setItem("token", "RenderverseToken")
-            window.location.href = '/app/welcome'
-        }, 1000) // Simulate API call
-    }
+    };
 
     const updateFormValue = ({ updateType, value }) => {
-        setErrorMessage("")
-        setLoginObj({ ...loginObj, [updateType]: value })
-    }
+        setErrorMessage("");
+        setLoginObj({ ...loginObj, [updateType]: value });
+    };
 
     const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword)
-    }
+        setShowPassword(!showPassword);
+    };
 
     return (
         <div className="min-h-screen bg-base-200 flex items-center justify-center py-8">
@@ -140,7 +160,7 @@ function Login() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;

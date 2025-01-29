@@ -1,33 +1,15 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../app/AuthContext';
 
-const PrivateRoute = () => {
-//     const [loading, setLoading] = useState(true); // Track loading state
-//     const [isAuthenticated, setIsAuthenticated] = useState(false); // State to hold the authentication status
+const PrivateRoute = ({ children }) => {
+  const { token } = useAuth();
 
-//     useEffect(() => {
-//         const token = localStorage.getItem("token");
-        
-//         // Log the token to the console
-//         if (token) {
-//             console.log("Token found:", token);
-//             setIsAuthenticated(true);
-//         } else {
-//             console.log("No token found");
-//         }
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
 
-//         setLoading(false); // Stop loading after the check
-//     }, []);
-
-//     // Show loading state until token check is complete
-//     if (loading) {
-//         return <div>Loading...</div>; // Or a spinner/loading indicator
-//     }
-
-//     // If authenticated, render child components; otherwise, navigate to login page
-//     return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
-// };
-return <Outlet/>;
-}
+  return children;
+};
 
 export default PrivateRoute;
