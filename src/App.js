@@ -37,7 +37,7 @@ function App() {
   }
 
   return (
-    <AuthProvider> {/* Wrap the entire app with AuthProvider */}
+    // <AuthProvider> {/* Wrap the entire app with AuthProvider */}
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -52,9 +52,9 @@ function App() {
           <Route
             path="/app/*"
             element={
-              <PrivateRoute>
+              // <PrivateRoute>
                 <Layout />
-              </PrivateRoute>
+              // </PrivateRoute>
             }
           />
 
@@ -62,7 +62,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
-    </AuthProvider>
+    // </AuthProvider>
   );
 }
 

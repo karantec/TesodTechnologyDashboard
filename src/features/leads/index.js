@@ -1,285 +1,198 @@
 import React, { useState } from 'react';
-import { FaCalendar, FaUser, FaMapMarkerAlt, FaBriefcase, FaChartLine } from 'react-icons/fa';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-// Sample data for charts
-const monthlyData = [
-  { name: 'Jan', campaigns: 40, success: 28, pending: 12 },
-  { name: 'Feb', campaigns: 55, success: 35, pending: 20 },
-  { name: 'Mar', campaigns: 85, success: 60, pending: 25 },
-  { name: 'Apr', campaigns: 65, success: 45, pending: 20 },
-  { name: 'May', campaigns: 95, success: 75, pending: 20 },
-  { name: 'Jun', campaigns: 75, success: 50, pending: 25 }
-];
-
-const statusData = [
-  { name: 'Active', value: 45 },
-  { name: 'Completed', value: 30 },
-  { name: 'Pending', value: 15 },
-  { name: 'Failed', value: 10 }
-];
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-const InputGroup = ({ label, icon: Icon, type = "text", name, value, onChange, options = [], placeholder }) => (
-  <div className="relative">
-    <label className="block text-sm font-semibold mb-2 text-gray-700 tracking-wide">
-      {label}
-    </label>
-    <div className="relative">
-      {Icon && (
-        <div className="absolute left-0 top-0 h-full flex items-center pl-4">
-          <Icon className="w-5 h-5 text-blue-500" />
-        </div>
-      )}
-      {type === 'select' ? (
-        <select
-          name={name}
-          value={value}
-          onChange={onChange}
-          className="w-full bg-gray-50 border-2 border-gray-200 px-4 py-3 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200 ease-in-out pl-12"
-        >
-          <option value="">{placeholder}</option>
-          {options.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className="w-full bg-gray-50 border-2 border-gray-200 px-4 py-3 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200 ease-in-out pl-12"
-        />
-      )}
-    </div>
-  </div>
-);
-
-const StatsCard = ({ title, value }) => (
-  <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6 border border-gray-100">
-    <div className="text-sm font-semibold text-gray-600">{title}</div>
-    <div className="mt-2 text-3xl font-bold text-blue-600">{value}</div>
-  </div>
-);
-
-const CampaignForm = () => {
+const AddProductForm = () => {
   const [formData, setFormData] = useState({
-    campaignName: '',
-    campaignManager: '',
-    startDate: '',
-    endDate: '',
-    country: '',
-    state: '',
-    city: ''
+    name: '',
+    category: '',
+    price: '',
+    discountedPrice: '',
+    weight: '',
+    karat: '',
+    description: '',
+    coverImage: '',
+    images: '',
+    inStock: true,
   });
+  
+  const [products, setProducts] = useState([
+    {
+      name: 'Gold Bracelet',
+      category: 'Bracelets',
+      price: 200,
+      discountedPrice: 180,
+      weight: 15,
+      karat: '18K',
+      description: 'Elegant gold bracelet',
+      coverImage: 'https://via.placeholder.com/150',
+      images: 'https://via.placeholder.com/150',
+      inStock: true,
+    },
+    {
+      name: 'Diamond Earrings',
+      category: 'Earrings',
+      price: 500,
+      discountedPrice: 450,
+      weight: 5,
+      karat: '14K',
+      description: 'Shiny diamond earrings',
+      coverImage: 'https://via.placeholder.com/150',
+      images: 'https://via.placeholder.com/150',
+      inStock: true,
+    },
+    {
+      name: 'Silver Necklace',
+      category: 'Necklaces',
+      price: 150,
+      discountedPrice: 120,
+      weight: 30,
+      karat: 'Sterling',
+      description: 'Beautiful silver necklace',
+      coverImage: 'https://via.placeholder.com/150',
+      images: 'https://via.placeholder.com/150',
+      inStock: false,
+    }
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setProducts([...products, formData]);
+    setFormData({
+      name: '', category: '', price: '', discountedPrice: '', weight: '', karat: '', description: '', coverImage: '', images: '', inStock: true
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Analytics Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <FaChartLine className="mr-2 text-blue-500" />
-            Campaign Analytics
-          </h2>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-semibold text-yellow-700 mb-6">Add New Jewelry Product</h1>
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block font-medium text-gray-700">Product Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            />
+          </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Campaign Trend Chart */}
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Campaign Performance Trend</h3>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="campaigns" stroke="#0088FE" />
-                    <Line type="monotone" dataKey="success" stroke="#00C49F" />
-                    <Line type="monotone" dataKey="pending" stroke="#FFBB28" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+          <div>
+            <label className="block font-medium text-gray-700">Category</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Bracelets">Bracelets</option>
+              <option value="Earrings">Earrings</option>
+              <option value="Necklaces">Necklaces</option>
+              <option value="Shop Earrings">Shop Earrings</option>
+              <option value="Wedding & Bridal">Wedding & Bridal</option>
+            </select>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block font-medium text-gray-700">Price ($)</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+              />
             </div>
-
-            {/* Campaign Status Distribution */}
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Campaign Status Distribution</h3>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={statusData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Monthly Performance Bar Chart */}
-            <div className="bg-white p-6 rounded-xl shadow-md lg:col-span-2">
-              <h3 className="text-lg font-semibold mb-4">Monthly Campaign Performance</h3>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="campaigns" fill="#0088FE" />
-                    <Bar dataKey="success" fill="#00C49F" />
-                    <Bar dataKey="pending" fill="#FFBB28" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+            <div>
+              <label className="block font-medium text-gray-700">Discounted Price ($)</label>
+              <input
+                type="number"
+                name="discountedPrice"
+                value={formData.discountedPrice}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+              />
             </div>
           </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatsCard title="Daily Campaigns" value="40" />
-            <StatsCard title="Weekly Campaigns" value="85" />
-            <StatsCard title="Monthly Campaigns" value="350" />
-            <StatsCard title="Total Campaigns" value="49" />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block font-medium text-gray-700">Weight (g)</label>
+              <input
+                type="number"
+                name="weight"
+                value={formData.weight}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-medium text-gray-700">Karat</label>
+              <select
+                name="karat"
+                value={formData.karat}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                required
+              >
+                <option value="">Select Karat</option>
+                <option value="14K">14K</option>
+                <option value="18K">18K</option>
+                <option value="22K">22K</option>
+                <option value="24K">24K</option>
+              </select>
+            </div>
           </div>
-        </div>
-
-        {/* Form Section */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200">
-            Create New Campaign
-          </h3>
-
-          <form className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Left Column */}
-              <div className="space-y-6">
-                <InputGroup
-                  label="Campaign Name"
-                  icon={FaBriefcase}
-                  name="campaignName"
-                  value={formData.campaignName}
-                  onChange={handleChange}
-                  placeholder="Enter campaign name"
-                />
-
-                <InputGroup
-                  label="Campaign Manager"
-                  icon={FaUser}
-                  name="campaignManager"
-                  value={formData.campaignManager}
-                  onChange={handleChange}
-                  placeholder="Enter manager name"
-                />
-
-                <InputGroup
-                  label="Country"
-                  icon={FaMapMarkerAlt}
-                  type="select"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  options={[
-                    { value: 'US', label: 'United States' },
-                    { value: 'UK', label: 'United Kingdom' },
-                    { value: 'CA', label: 'Canada' }
-                  ]}
-                  placeholder="Select a country"
-                />
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <InputGroup
-                    label="Start Date"
-                    icon={FaCalendar}
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                  />
-                  <InputGroup
-                    label="End Date"
-                    icon={FaCalendar}
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <InputGroup
-                  label="State"
-                  icon={FaMapMarkerAlt}
-                  type="select"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  options={[
-                    { value: 'CA', label: 'California' },
-                    { value: 'NY', label: 'New York' },
-                    { value: 'TX', label: 'Texas' }
-                  ]}
-                  placeholder="Select a state"
-                />
-
-                <InputGroup
-                  label="City"
-                  icon={FaMapMarkerAlt}
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  placeholder="Enter city name"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-              <button
-                type="button"
-                className="px-6 py-3 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 font-medium transition-colors duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200"
-              >
-                Create Campaign
-              </button>
-            </div>
-          </form>
-        </div>
+          
+          <button type="submit" className="bg-yellow-500 text-white px-6 py-2 rounded-lg font-semibold">Add Product</button>
+        </form>
+      </div>
+      
+      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+        <h2 className="text-xl font-semibold mb-4">Product List</h2>
+        <table className="w-full border-collapse border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">Name</th>
+              <th className="border p-2">Category</th>
+              <th className="border p-2">Price</th>
+              <th className="border p-2">Discounted Price</th>
+              <th className="border p-2">Weight</th>
+              <th className="border p-2">Karat</th>
+              <th className="border p-2">In Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product, index) => (
+              <tr key={index} className="border">
+                <td className="border p-2">{product.name}</td>
+                <td className="border p-2">{product.category}</td>
+                <td className="border p-2">${product.price}</td>
+                <td className="border p-2">${product.discountedPrice || 'N/A'}</td>
+                <td className="border p-2">{product.weight}g</td>
+                <td className="border p-2">{product.karat}</td>
+                <td className="border p-2">{product.inStock ? 'Yes' : 'No'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 };
 
-export default CampaignForm;
+export default AddProductForm;

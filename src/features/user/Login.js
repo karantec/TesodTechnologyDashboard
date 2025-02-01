@@ -6,8 +6,13 @@ import InputText from '../../components/Input/InputText';
 
 function Login() {
     const INITIAL_LOGIN_OBJ = {
-        username: "",
-        password: ""
+        username: "admin",
+        password: "admin"
+    };
+
+    const ADMIN_CREDENTIALS = {
+        username: "admin",
+        password: "admin" // Admin credentials stored as username and password
     };
 
     const [loading, setLoading] = useState(false);
@@ -16,10 +21,7 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    // Get the base_url from environment variable
-    const loginApiUrl = `${process.env.REACT_APP_BASE_URL}/super-admin/auth/login`;
-
-    const submitForm = async (e) => {
+    const submitForm = (e) => {
         e.preventDefault();
         setErrorMessage("");
         
@@ -31,31 +33,15 @@ function Login() {
 
         setLoading(true);
         
-        try {
-            // API call to authenticate the user
-            const response = await fetch(loginApiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: username, password: password }), // Modify if required by API
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Save the token in localStorage
-                localStorage.setItem("token", data.data._token);
-                // Navigate to the dashboard after successful login
-                navigate('/app/welcome');
+        // Custom admin authentication logic
+        setTimeout(() => {
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                navigate('/app/welcome'); // Navigate to dashboard without storing a token
             } else {
-                setErrorMessage(data.message || "An error occurred during login.");
+                setErrorMessage("Invalid username or password.");
             }
-        } catch (error) {
-            setErrorMessage("Network error. Please try again later.");
-        } finally {
             setLoading(false);
-        }
+        }, 1000);
     };
 
     const updateFormValue = ({ updateType, value }) => {
@@ -105,43 +91,7 @@ function Login() {
                                         className="absolute top-1/2 mt-4 right-3 transform -translate-y-1/2"
                                         onClick={togglePasswordVisibility}
                                     >
-                                        {showPassword ? (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                className="w-6 h-6 text-gray-600"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"
-                                                />
-                                            </svg>
-                                        ) : (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                className="w-6 h-6 text-gray-600"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"
-                                                />
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M15 12l-3.354-3.354M12 4a9 9 0 00-9 9c0 3.034 1.517 5.88 4.243 7.657"
-                                                />
-                                            </svg>
-                                        )}
+                                        {showPassword ? "🙈" : "👁️"}
                                     </button>
                                 </div>
                             </div>
@@ -154,7 +104,6 @@ function Login() {
 
                             <ErrorText styleClass="mt-6">{errorMessage}</ErrorText>
                             <button type="submit" className={"btn mt-6 w-full bg-orange-500 text-white" + (loading ? " loading" : "")}>Login</button>
-
                         </form>
                     </div>
                 </div>

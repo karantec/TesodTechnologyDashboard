@@ -13,6 +13,7 @@ const Page404 = lazy(() => import('../pages/protected/404'))
 const Blank = lazy(() => import('../pages/protected/Blank'))
 const Charts = lazy(() => import('../pages/protected/Charts'))
 const Leads = lazy(() => import('../pages/protected/Leads'))
+const ViewProducts=lazy(()=>import('../pages/protected/View'))
 const RequestDemo = lazy(() => import('../pages/protected/RequestDemo'))
 const BookDemo=lazy(()=>import('../pages/protected/BookDemo'))
 const Integration = lazy(() => import('../pages/protected/Integration'))
@@ -34,7 +35,7 @@ const ChangePassword=lazy(()=>import('../pages/protected/ChangePassword'))
 const routes = [
   {
     path: '/dashboard', // the url
-    component: Dashboard, // view rendered
+  component: Dashboard, // view rendered
   },
   {
     path: '/welcome', // the url
@@ -45,7 +46,11 @@ const routes = [
     component: Leads,
   },
   {
-    path: '/finanace',
+    path: '/View',
+    component: ViewProducts,
+  },
+  {
+    path: '/User',
     component: FinanceAccounting,
   },
   {
