@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AddProductForm = () => {
   const [formData, setFormData] = useState({
@@ -9,49 +10,12 @@ const AddProductForm = () => {
     weight: '',
     karat: '',
     description: '',
-    coverImage: '',
-    images: '',
+    coverImage: null,
+    images: [],
     inStock: true,
   });
-  
-  const [products, setProducts] = useState([
-    {
-      name: 'Gold Bracelet',
-      category: 'Bracelets',
-      price: 200,
-      discountedPrice: 180,
-      weight: 15,
-      karat: '18K',
-      description: 'Elegant gold bracelet',
-      coverImage: 'https://via.placeholder.com/150',
-      images: 'https://via.placeholder.com/150',
-      inStock: true,
-    },
-    {
-      name: 'Diamond Earrings',
-      category: 'Earrings',
-      price: 500,
-      discountedPrice: 450,
-      weight: 5,
-      karat: '14K',
-      description: 'Shiny diamond earrings',
-      coverImage: 'https://via.placeholder.com/150',
-      images: 'https://via.placeholder.com/150',
-      inStock: true,
-    },
-    {
-      name: 'Silver Necklace',
-      category: 'Necklaces',
-      price: 150,
-      discountedPrice: 120,
-      weight: 30,
-      karat: 'Sterling',
-      description: 'Beautiful silver necklace',
-      coverImage: 'https://via.placeholder.com/150',
-      images: 'https://via.placeholder.com/150',
-      inStock: false,
-    }
-  ]);
+
+  const [products, setProducts] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,136 +25,266 @@ const AddProductForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleImageUpload = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      setFormData((prevState) => ({
+        ...prevState,
+        images: files,
+      }));
+      toast.success("Images uploaded successfully!");
+    }
+  };
+
+  const handleCoverImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prevState) => ({
+        ...prevState,
+        coverImage: file,
+      }));
+      toast.success("Cover image uploaded successfully!");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setProducts([...products, formData]);
-    setFormData({
-      name: '', category: '', price: '', discountedPrice: '', weight: '', karat: '', description: '', coverImage: '', images: '', inStock: true
-    });
+    try {
+      const formDataToSubmit = new FormData();
+      for (let key in formData) {
+        if (formData[key] instanceof FileList) {
+          for (let file of formData[key]) {
+            formDataToSubmit.append(key, file);
+          }
+        } else {
+          formDataToSubmit.append(key, formData[key]);
+        }
+      }
+
+      const response = await fetch('http://localhost:8000/gold/add', {
+        method: 'POST',
+        body: formDataToSubmit,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add product');
+      }
+
+      const newProduct = await response.json();
+      setProducts([...products, newProduct]);
+      setFormData({
+        name: '',
+        category: '',
+        price: '',
+        discountedPrice: '',
+        weight: '',
+        karat: '',
+        description: '',
+        coverImage: null,
+        images: [],
+        inStock: true,
+      });
+
+      toast.success("Product added successfully!");
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error("Failed to add product");
+    }
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-semibold text-yellow-700 mb-6">Add New Jewelry Product</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block font-medium text-gray-700">Product Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-            />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="w-full bg-white shadow-md">
+        <div className="max-w-7xl mx-auto py-6 px-4">
+          <h1 className="text-3xl font-bold text-gray-900">Add New Jewelry Product</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Fill in the details below to add a new jewelry item to your inventory
+          </p>
+        </div>
+      </div>
+
+      {/* Main Form */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit} className="space-y-8 bg-white shadow-lg rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column */}
+            <div className="p-6 space-y-6">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Basic Information</h2>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                      Product Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                      Category
+                    </label>
+                    <select
+                      id="category"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      <option value="Bracelets">Bracelets</option>
+                      <option value="Earrings">Earrings</option>
+                      <option value="Necklaces">Necklaces</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Middle Column */}
+            <div className="p-6 space-y-6">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Pricing & Specifications</h2>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                      Regular Price
+                    </label>
+                    <input
+                      type="number"
+                      id="price"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="discountedPrice" className="block text-sm font-medium text-gray-700">
+                      Discounted Price
+                    </label>
+                    <input
+                      type="number"
+                      id="discountedPrice"
+                      name="discountedPrice"
+                      value={formData.discountedPrice}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="weight" className="block text-sm font-medium text-gray-700">
+                      Weight (g)
+                    </label>
+                    <input
+                      type="number"
+                      id="weight"
+                      name="weight"
+                      value={formData.weight}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="karat" className="block text-sm font-medium text-gray-700">
+                      Karat
+                    </label>
+                    <select
+                      id="karat"
+                      name="karat"
+                      value={formData.karat}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      required
+                    >
+                      <option value="">Select Karat</option>
+                      <option value="14K">14K</option>
+                      <option value="18K">18K</option>
+                      <option value="22K">22K</option>
+                      <option value="24K">24K</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="p-6 space-y-6">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Images</h2>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700">
+                      Cover Image
+                    </label>
+                    <input
+                      type="file"
+                      id="coverImage"
+                      name="coverImage"
+                      onChange={handleCoverImageUpload}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      accept="image/*"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="images" className="block text-sm font-medium text-gray-700">
+                      Additional Images
+                    </label>
+                    <input
+                      type="file"
+                      id="images"
+                      name="images"
+                      onChange={handleImageUpload}
+                      multiple
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div>
-            <label className="block font-medium text-gray-700">Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
+
+          {/* Full Width Description Section */}
+          <div className="px-6 pb-6">
+            <div className="space-y-2">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                Product Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="px-6 pb-6">
+            <button
+              type="submit"
+              className="w-full bg-yellow-600 text-white py-3 px-4 rounded-md hover:bg-yellow-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
             >
-              <option value="">Select Category</option>
-              <option value="Bracelets">Bracelets</option>
-              <option value="Earrings">Earrings</option>
-              <option value="Necklaces">Necklaces</option>
-              <option value="Shop Earrings">Shop Earrings</option>
-              <option value="Wedding & Bridal">Wedding & Bridal</option>
-            </select>
+              Add Product
+            </button>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block font-medium text-gray-700">Price ($)</label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700">Discounted Price ($)</label>
-              <input
-                type="number"
-                name="discountedPrice"
-                value={formData.discountedPrice}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block font-medium text-gray-700">Weight (g)</label>
-              <input
-                type="number"
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700">Karat</label>
-              <select
-                name="karat"
-                value={formData.karat}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                required
-              >
-                <option value="">Select Karat</option>
-                <option value="14K">14K</option>
-                <option value="18K">18K</option>
-                <option value="22K">22K</option>
-                <option value="24K">24K</option>
-              </select>
-            </div>
-          </div>
-          
-          <button type="submit" className="bg-yellow-500 text-white px-6 py-2 rounded-lg font-semibold">Add Product</button>
         </form>
       </div>
-      
-      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-        <h2 className="text-xl font-semibold mb-4">Product List</h2>
-        <table className="w-full border-collapse border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Category</th>
-              <th className="border p-2">Price</th>
-              <th className="border p-2">Discounted Price</th>
-              <th className="border p-2">Weight</th>
-              <th className="border p-2">Karat</th>
-              <th className="border p-2">In Stock</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr key={index} className="border">
-                <td className="border p-2">{product.name}</td>
-                <td className="border p-2">{product.category}</td>
-                <td className="border p-2">${product.price}</td>
-                <td className="border p-2">${product.discountedPrice || 'N/A'}</td>
-                <td className="border p-2">{product.weight}g</td>
-                <td className="border p-2">{product.karat}</td>
-                <td className="border p-2">{product.inStock ? 'Yes' : 'No'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };
