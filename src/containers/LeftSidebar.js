@@ -35,10 +35,10 @@ function LeftSidebar(){
                                     (<NavLink
                                         end
                                         to={route.path}
-                                        className={({isActive}) => `${isActive ? 'font-semibold  bg-base-200 ' : 'font-normal'}`} >
+                                        className={({isActive}) => `${isActive ? 'font-semibold   ' : 'font-normal'}`} >
                                            {route.icon} {route.name}
                                             {
-                                                location.pathname === route.path ? (<span className="absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md bg-primary "
+                                                location.pathname === route.path ? (<span className="absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md"
                                                 aria-hidden="true"></span>) : null
                                             }
                                     </NavLink>)

@@ -30,8 +30,13 @@ const TermofServie=lazy(()=>import('../pages/TermofService'))
 const EditProfile=lazy(()=>import('../pages/protected/EditProfile'))
 const DocFeatures = lazy(() => import('../pages/DocFeatures'))
 const DocComponents = lazy(() => import('../pages/DocComponents'))
+const Category=lazy(()=>import('../pages/protected/Category'))
 const Feedback = lazy(() => import('../pages/protected/Feedback'))
+const OrderList=lazy(()=>import('../pages/protected/Order'));
+const ViewBlog=lazy(()=>import('../pages/protected/Blog'));
 const ChangePassword=lazy(()=>import('../pages/protected/ChangePassword'))
+const About=lazy(()=>import('../pages/protected/About'));
+
 const routes = [
   {
     path: '/dashboard', // the url
@@ -46,12 +51,31 @@ const routes = [
     component: Leads,
   },
   {
+    path: '/Category',
+    component: Category,
+  },
+  {
+    path: '/About',
+    component: About,
+  },
+  {
+
     path: '/View',
     component: ViewProducts,
   },
   {
-    path: '/User',
+    path: '/Users',
     component: FinanceAccounting,
+  },
+  {
+    
+    path: '/Order',
+    component: OrderList,
+  },
+  {
+    
+    path: '/Blog',
+    component: ViewBlog,
   },
   {
     path: '/troubleshoot',

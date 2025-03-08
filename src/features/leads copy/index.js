@@ -5,11 +5,13 @@ const FinanceAccounting = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://jewelleryapp-2.onrender.com/auth/users');
+        const response = await axios.get('http://localhost:8000/auth/users');
         setUsers(response.data);
       } catch (err) {
         setError('Failed to fetch users');
@@ -19,6 +21,11 @@ const FinanceAccounting = () => {
     };
     fetchUsers();
   }, []);
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center justify-center">
@@ -43,7 +50,7 @@ const FinanceAccounting = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {currentUsers.map((user) => (
                 <tr key={user._id} className="border-b border-gray-300">
                   <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
                     <img src={user.profileImage} alt={user.name} className="w-12 h-12 rounded-full" />
@@ -63,6 +70,25 @@ const FinanceAccounting = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-4 space-x-2">
+          <button
+            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 bg-gray-100 rounded-md">Page {currentPage} of {totalPages}</span>
+          <button
+            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
