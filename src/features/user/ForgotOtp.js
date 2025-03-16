@@ -1,64 +1,58 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import LandingIntro from './LandingIntro'
-import ErrorText from '../../components/Typography/ErrorText'
-import InputText from '../../components/Input/InputText'
-import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import InputText from '../../components/Input/InputText';
+import ErrorText from '../../components/Typography/ErrorText';
+import LandingIntro from './LandingIntro';
+import { forgotPassword } from '../../app/api';
+import { CheckCircleIcon } from '@heroicons/react/solid';
 
 function ForgotPasswordOTP() {
     const INITIAL_USER_OBJ = {
-        emailId: "",
-        otp: ""
-    }
+        emailId: '',
+        otp: ''
+    };
 
-    const [loading, setLoading] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
-    const [stage, setStage] = useState('email') // 'email', 'otp', 'success'
-    const [userObj, setUserObj] = useState(INITIAL_USER_OBJ)
-    const [generatedOTP, setGeneratedOTP] = useState("")
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [stage, setStage] = useState('email');
+    const [userObj, setUserObj] = useState(INITIAL_USER_OBJ);
 
-    // Generate OTP
-    const generateOTP = () => {
-        return Math.floor(100000 + Math.random() * 900000).toString()
-    }
+    const submitEmailForm = async (e) => {
+        e.preventDefault();
+        setErrorMessage('');
 
-    const submitEmailForm = (e) => {
-        e.preventDefault()
-        setErrorMessage("")
+        if (userObj.emailId.trim() === '') return setErrorMessage('Email Id is required!');
 
-        if (userObj.emailId.trim() === "") 
-            return setErrorMessage("Email Id is required!")
-
-        // Simulate OTP generation and sending
-        setLoading(true)
-        const otp = generateOTP()
-        setGeneratedOTP(otp)
-        
-        // In a real scenario, you would call an API to send OTP
-        console.log(`OTP sent to ${userObj.emailId}: ${otp}`)
-        
-        setLoading(false)
-        setStage('otp')
-    }
+        setLoading(true);
+        try {
+            const response = await forgotPassword(userObj.emailId);
+            if (response.status) {
+                setStage('otp');
+            } else {
+                setErrorMessage(response.message || 'Failed to send OTP');
+            }
+        } catch (error) {
+            setErrorMessage(error.message || 'Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const verifyOTP = (e) => {
-        e.preventDefault()
-        setErrorMessage("")
+        e.preventDefault();
+        setErrorMessage('');
 
-        if (userObj.otp.trim() === "") 
-            return setErrorMessage("OTP is required!")
+        if (userObj.otp.trim() === '') return setErrorMessage('OTP is required!');
 
-        if (userObj.otp !== generatedOTP) 
-            return setErrorMessage("Invalid OTP. Please try again.")
-
-        // OTP Verified Successfully
-        setStage('success')
-    }
+        // Navigate to reset password page with OTP
+        navigate('/reset-password', { state: { otp: userObj.otp } });
+    };
 
     const updateFormValue = ({ updateType, value }) => {
-        setErrorMessage("")
-        setUserObj({ ...userObj, [updateType]: value })
-    }
+        setErrorMessage('');
+        setUserObj({ ...userObj, [updateType]: value });
+    };
 
     const renderEmailStage = () => (
         <form onSubmit={submitEmailForm}>
@@ -66,28 +60,25 @@ function ForgotPasswordOTP() {
                 We will send a 6-digit OTP to your email
             </p>
             <div className="mb-4">
-                <InputText 
-                    type="NumberDon't have an account?Register"  // Changed to "email" for proper validation
-                    defaultValue={userObj.emailId} 
-                    updateType="emailId" 
-                    containerStyle="mt-4" 
-                    labelTitle="OTP" 
+                <InputText
+                    type="email"
+                    defaultValue={userObj.emailId}
+                    updateType="emailId"
+                    containerStyle="mt-4"
+                    labelTitle="Email Address"
                     updateFormValue={updateFormValue}
                 />
             </div>
 
             <ErrorText styleClass="mt-12">{errorMessage}</ErrorText>
-          <Link to="/reset-password">  
-          <button 
-                type="submit" 
+            <button
+                type="submit"
                 className={"btn mt-2 w-full btn-primary" + (loading ? " loading" : "")}
             >
                 Send OTP
             </button>
-            </Link>
-          
         </form>
-    )
+    );
 
     const renderOTPStage = () => (
         <form onSubmit={verifyOTP}>
@@ -95,57 +86,36 @@ function ForgotPasswordOTP() {
                 Enter the 6-digit OTP sent to {userObj.emailId}
             </p>
             <div className="mb-4">
-                <InputText 
-                    type="number"  // Keep as number for OTP input
-                    defaultValue={userObj.otp} 
-                    updateType="otp" 
-                    containerStyle="mt-4" 
-                    labelTitle="Enter OTP" 
+                <InputText
+                    type="text"
+                    defaultValue={userObj.otp}
+                    updateType="otp"
+                    containerStyle="mt-4"
+                    labelTitle="Enter OTP"
                     updateFormValue={updateFormValue}
-                    maxLength={6}  // Ensure max length is respected
+                    maxLength={6}
                 />
             </div>
 
             <ErrorText styleClass="mt-12">{errorMessage}</ErrorText>
-            <button 
-                type="submit" 
+            <button
+                type="submit"
                 className="btn mt-2 w-full btn-primary"
             >
                 Verify OTP
             </button>
 
             <div className='text-center mt-4'>
-                <button 
-                    type="button" 
-                    onClick={() => setStage('email')} 
+                <button
+                    type="button"
+                    onClick={submitEmailForm}
                     className="text-primary"
                 >
                     Resend OTP
                 </button>
             </div>
         </form>
-    )
-
-    const renderSuccessStage = () => (
-        <>
-            <div className='text-center mt-8'>
-                <CheckCircleIcon className='inline-block w-32 text-success'/>
-            </div>
-            <p className='my-4 text-xl font-bold text-center'>
-                OTP Verified Successfully
-            </p>
-            <p className='mt-4 mb-8 font-semibold text-center'>
-                You can now reset your password
-            </p>
-            <div className='text-center mt-4'>
-                <Link to="/reset-password">
-                    <button className="btn btn-block btn-primary">
-                        Reset Password
-                    </button>
-                </Link>
-            </div>
-        </>
-    )
+    );
 
     return (
         <div className="min-h-screen bg-base-200 flex items-center">
@@ -161,12 +131,11 @@ function ForgotPasswordOTP() {
 
                         {stage === 'email' && renderEmailStage()}
                         {stage === 'otp' && renderOTPStage()}
-                        {stage === 'success' && renderSuccessStage()}
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default ForgotPasswordOTP;
