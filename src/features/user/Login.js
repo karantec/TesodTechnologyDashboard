@@ -1,51 +1,48 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import LandingIntro from './LandingIntro';
-import ErrorText from '../../components/Typography/ErrorText';
 import InputText from '../../components/Input/InputText';
+import ErrorText from '../../components/Typography/ErrorText';
+import { loginUser } from '../../app/api';
 
 function Login() {
     const INITIAL_LOGIN_OBJ = {
-        username: "admin",
-        password: "admin"
-    };
-
-    const ADMIN_CREDENTIALS = {
-        username: "admin",
-        password: "admin" // Admin credentials stored as username and password
+        email: '',
+        password: ''
     };
 
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState('');
     const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault();
-        setErrorMessage("");
+        setErrorMessage('');
         
-        const { username, password } = loginObj;
+        const { email, password } = loginObj;
 
-        // Basic validation
-        if (username.trim() === "") return setErrorMessage("Username is required!");
-        if (password.trim() === "") return setErrorMessage("Password is required!");
+        if (email.trim() === '') return setErrorMessage('Email is required!');
+        if (password.trim() === '') return setErrorMessage('Password is required!');
 
         setLoading(true);
         
-        // Custom admin authentication logic
-        setTimeout(() => {
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                navigate('/app/welcome'); // Navigate to dashboard without storing a token
+        try {
+            const result = await loginUser(email, password);
+            if (result.status) {
+                navigate('/app/welcome');
             } else {
-                setErrorMessage("Invalid username or password.");
+                setErrorMessage(result.message);
             }
+        } catch (error) {
+            setErrorMessage(error.message || 'Login failed');
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     };
 
     const updateFormValue = ({ updateType, value }) => {
-        setErrorMessage("");
+        setErrorMessage('');
         setLoginObj({ ...loginObj, [updateType]: value });
     };
 
@@ -70,11 +67,11 @@ function Login() {
                         <form onSubmit={submitForm}>
                             <div className="mb-6">
                                 <InputText
-                                    defaultValue={loginObj.username}
-                                    type="text"
-                                    updateType="username"
+                                    defaultValue={loginObj.email}
+                                    type="email"
+                                    updateType="email"
                                     containerStyle="mt-4"
-                                    labelTitle="Username"
+                                    labelTitle="Email"
                                     updateFormValue={updateFormValue}
                                 />
                                 <div className="relative mt-4">
