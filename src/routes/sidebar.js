@@ -30,7 +30,7 @@ const iconClasses = 'h-5 w-5'; // Adjusted icon size for consistency
 // Define routes for the sidebar with paths, icons, and names
 const routes = [
   {
-    path: '/app/dashboard',
+    
     icon: <Squares2X2Icon className={iconClasses} />,
     name: 'Dashboard',
   },
@@ -51,62 +51,55 @@ const routes = [
   
   {
     
-    name: 'Category Management',
+    name: 'Team Management',
   },
 
   {
-    path: '/app/Category',
+    path: '/app/team',
     icon: <MdCategory className={iconClasses} />,
-    name: 'Category',
+    name: 'Teams',
   },
-
 
   {
     
-    
-    name: 'Product Management',
+ 
+    name: 'Career Management',
+  },
+  {
+    path: '/app/Career',
+    icon: <FaUserAstronaut className={iconClasses} />,
+    name: 'View Candidates',
   },
   
   {
-    path: '/app/leads',
-    icon: <FaAddressBook className={iconClasses} />,
-    name: 'Add Products',
+    
+ 
+    name: 'Job Management',
   },
-   
   {
-    path: '/app/View',
-    icon: <FaAddressBook className={iconClasses} />,
-    name: 'View Products',
+    path: '/app/Job',
+    icon: <FaUserAstronaut className={iconClasses} />,
+    name: 'View Job',
   },
   {
     
  
-    name: 'User Management',
+    name: 'Service Management',
   },
   {
-    path: '/app/Users',
+    path: '/app/Service',
     icon: <FaUserAstronaut className={iconClasses} />,
-    name: 'Users',
+    name: 'View Service',
   },
   {
     
  
-    name: 'Order Management',
+    name: 'Testimonial Management',
   },
   {
-    path: '/app/Order',
+    path: '/app/Testimonial',
     icon: <FaUserAstronaut className={iconClasses} />,
-    name: 'View Order',
-  },
-  {
-    
- 
-    name: 'Blog Management',
-  },
-  {
-    path: '/app/Blog',
-    icon: <FaUserAstronaut className={iconClasses} />,
-    name: 'View Blog',
+    name: 'View Testimonial',
   },
   
 ];

@@ -29,151 +29,155 @@ const PrivacyPolicy=lazy(()=>import('../pages/PrivacyPolicy'))
 const TermofServie=lazy(()=>import('../pages/TermofService'))
 const EditProfile=lazy(()=>import('../pages/protected/EditProfile'))
 const DocFeatures = lazy(() => import('../pages/DocFeatures'))
-const DocComponents = lazy(() => import('../pages/DocComponents'))
-const Category=lazy(()=>import('../pages/protected/Category'))
+const DocComponents = lazy(() => import('../pages/DocComponents'));
+const Teams =lazy(()=>import('../pages/protected/Category'))
 const Feedback = lazy(() => import('../pages/protected/Feedback'))
-const OrderList=lazy(()=>import('../pages/protected/Order'));
-const ViewBlog=lazy(()=>import('../pages/protected/Blog'));
+const Carrier = lazy(() => import('../pages/protected/Carrier'))
+const ServiceList=lazy(()=>import('../pages/protected/Order'));
+const ViewTestimonial=lazy(()=>import('../pages/protected/Blog'));
 const ChangePassword=lazy(()=>import('../pages/protected/ChangePassword'))
 const About=lazy(()=>import('../pages/protected/About'));
 
 const routes = [
-  {
-    path: '/dashboard', // the url
+  { // the url
   component: Dashboard, // view rendered
   },
+  // {
+  //   path: '/welcome', // the url
+  //   component: Welcome, // view rendered
+  // },
+  // {
+  //   path: '/leads',
+  //   component: Leads,
+  // },
   {
-    path: '/welcome', // the url
-    component: Welcome, // view rendered
+    path: '/team',
+    component: Teams,
   },
-  {
-    path: '/leads',
-    component: Leads,
-  },
-  {
-    path: '/Category',
-    component: Category,
-  },
-  {
-    path: '/About',
-    component: About,
-  },
-  {
+  // {
+  //   path: '/About',
+  //   component: About,
+  // },
+  // {
 
-    path: '/View',
-    component: ViewProducts,
+  //   path: '/View',
+  //   component: ViewProducts,
+  // },
+  {
+    path: '/Career',
+    component: Carrier,
   },
   {
-    path: '/Users',
+    path: '/Job',
     component: FinanceAccounting,
   },
   {
     
-    path: '/Order',
-    component: OrderList,
+    path: '/Service',
+    component: ServiceList,
   },
   {
     
-    path: '/Blog',
-    component: ViewBlog,
+    path: '/testimonial',
+    component: ViewTestimonial
   },
-  {
-    path: '/troubleshoot',
-    component: TroubleShoot,
-  },
-  {
-    path: '/callback',
-    component: CallBackRequest,
-  },
-  {
-    path: '/RequestDemo',
-    component: RequestDemo,
-  },
-  {
-    path: '/BookDemo',
-    component: BookDemo,
-  },
-  {
-    path: '/Feedback',
-    component: Feedback,
-  },
-  {
-    path: '/settings-team',
-    component: Team,
-  },
-  {
-    path: '/calendar',
-    component: Calendar,
-  },
-  {
-    path: '/transactions',
-    component: Transactions,
-  },
-  {
-    path: '/Register',
-    component: Registration,
-  },
-  {
-    path: '/Manual',
-    component: Manual,
-  },
-  {
-    path: '/EditProfile',
-    component: EditProfile,
-  },
-  {
-    path:'/ChangePassword',
-    component:ChangePassword,
-  },
+  // {
+  //   path: '/troubleshoot',
+  //   component: TroubleShoot,
+  // },
+  // {
+  //   path: '/callback',
+  //   component: CallBackRequest,
+  // },
+  // {
+  //   path: '/RequestDemo',
+  //   component: RequestDemo,
+  // },
+  // {
+  //   path: '/BookDemo',
+  //   component: BookDemo,
+  // },
+  // {
+  //   path: '/Feedback',
+  //   component: Feedback,
+  // },
+  // {
+  //   path: '/settings-team',
+  //   component: Team,
+  // },
+  // {
+  //   path: '/calendar',
+  //   component: Calendar,
+  // },
+  // {
+  //   path: '/transactions',
+  //   component: Transactions,
+  // },
+  // {
+  //   path: '/Register',
+  //   component: Registration,
+  // },
+  // {
+  //   path: '/Manual',
+  //   component: Manual,
+  // },
+  // {
+  //   path: '/EditProfile',
+  //   component: EditProfile,
+  // },
+  // {
+  //   path:'/ChangePassword',
+  //   component:ChangePassword,
+  // },
 
-  {
-    path: '/Address',
-    component: Address,
-  },
-  {
-    path: '/settings-billing',
-    component: Bills,
-  },
-  {
-    path: '/getting-started',
-    component: GettingStarted,
-  },
-  {
-    path: '/PrivacyPolicy',
-    component: PrivacyPolicy,
-  },
-  {
-    path: '/Faq',
-    component: FAQPage,
-  },
-  {
-    path: '/termofservice',
-    component:TermofServie ,
-  },
-  {
-    path: '/features',
-    component: DocFeatures,
-  },
-  {
-    path: '/components',
-    component: DocComponents,
-  },
-  {
-    path: '/integration',
-    component: Integration,
-  },
-  {
-    path: '/charts',
-    component: Charts,
-  },
-  {
-    path: '/404',
-    component: Page404,
-  },
-  {
-    path: '/blank',
-    component: Blank,
-  },
+  // {
+  //   path: '/Address',
+  //   component: Address,
+  // },
+  // {
+  //   path: '/settings-billing',
+  //   component: Bills,
+  // },
+  // {
+  //   path: '/getting-started',
+  //   component: GettingStarted,
+  // },
+  // {
+  //   path: '/PrivacyPolicy',
+  //   component: PrivacyPolicy,
+  // },
+  // {
+  //   path: '/Faq',
+  //   component: FAQPage,
+  // },
+  // {
+  //   path: '/termofservice',
+  //   component:TermofServie ,
+  // },
+  // {
+  //   path: '/features',
+  //   component: DocFeatures,
+  // },
+  // {
+  //   path: '/components',
+  //   component: DocComponents,
+  // },
+  // {
+  //   path: '/integration',
+  //   component: Integration,
+  // },
+  // {
+  //   path: '/charts',
+  //   component: Charts,
+  // },
+  // {
+  //   path: '/404',
+  //   component: Page404,
+  // },
+  // {
+  //   path: '/blank',
+  //   component: Blank,
+  // },
 ]
 
 export default routes
