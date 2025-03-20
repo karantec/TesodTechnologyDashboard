@@ -22,15 +22,16 @@ function Login() {
         
         const { email, password } = loginObj;
 
-        if (email.trim() === '') return setErrorMessage('Email is required!');
-        if (password.trim() === '') return setErrorMessage('Password is required!');
+        if (!email.trim()) return setErrorMessage('Email is required!');
+        if (!password.trim()) return setErrorMessage('Password is required!');
 
         setLoading(true);
         
         try {
             const result = await loginUser(email, password);
+
             if (result.status) {
-                navigate('/app/welcome');
+                navigate('/app/team');
             } else {
                 setErrorMessage(result.message);
             }
