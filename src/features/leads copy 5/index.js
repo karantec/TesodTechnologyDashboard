@@ -5,30 +5,42 @@ const ViewCategoriesPage = () => {
   const [teams, setTeams] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editTeam, setEditTeam] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [name, setName] = useState('');
-  const [position, setPosition] = useState('');
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [formData, setFormData] = useState({ name: '', position: '', photo: '' });
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const teamsPerPage = 6;
 
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const response = await axios.get('https://framedigitalbackend.onrender.com/teams/Team');
-        setTeams(response.data);
-      } catch (err) {
-        setError('Failed to fetch teams');
-      }
-    };
-
     fetchTeams();
   }, []);
 
+  const fetchTeams = async () => {
+    try {
+      const response = await axios.get('https://framedigitalbackend.onrender.com/teams/Team');
+      setTeams(response.data);
+    } catch (err) {
+      setError('Failed to fetch teams');
+    }
+  };
+
+  const handleAddTeam = async () => {
+    try {
+      await axios.post('https://framedigitalbackend.onrender.com/teams/creatTeam', formData);
+      setIsAddModalOpen(false);
+      setFormData({ name: '', position: '', photo: '' });
+      fetchTeams();
+    } catch (err) {
+      setError('Failed to add team member');
+    }
+  };
+
   const handleEdit = (team) => {
-    setEditTeam(team);
-    setName(team.name);
-    setPosition(team.position);
-    setShowModal(true);
+    setSelectedTeam(team);
+    setFormData({
+      name: team.name,
+      position: team.position,
+      photo: team.photo
+    });
   };
 
   const handleDelete = async (id) => {
@@ -40,13 +52,33 @@ const ViewCategoriesPage = () => {
     }
   };
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     try {
-      const response = await axios.put(`https://framedigitalbackend.onrender.com/teams/Team/${editTeam._id}`, { name, position });
-      setTeams(teams.map(team => (team._id === editTeam._id ? response.data : team)));
-      setShowModal(false);
+      await axios.put(`https://framedigitalbackend.onrender.com/teams/Team/${selectedTeam._id}`, formData);
+      setSelectedTeam(null);
+      fetchTeams();
     } catch (err) {
       setError('Failed to update team member');
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageData = new FormData();
+    imageData.append('file', file);
+    imageData.append('upload_preset', 'marketdata');
+
+    try {
+      const response = await axios.post('https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload', imageData);
+      setFormData((prev) => ({ ...prev, photo: response.data.secure_url }));
+    } catch (err) {
+      setError('Image upload failed');
     }
   };
 
@@ -57,66 +89,66 @@ const ViewCategoriesPage = () => {
   const totalPages = Math.ceil(teams.length / teamsPerPage);
 
   return (
-    <div className="p-6 min-h-screen">
+    <div className="p-2 min-h-screen">
       {error && <p className="text-red-500 text-center font-semibold">{error}</p>}
 
+      <h2 className="text-3xl font-bold text-black mt-12 mb-6 text-center">Team Members</h2>
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600"
+        >
+          Add Team Member
+        </button>
+      </div>
+
       {/* Display Team Members */}
-      <h2 className="text-3xl font-bold text-blue-900 mt-12 mb-6 text-center">Team Members</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {currentTeams.map((team) => (
-          <div key={team._id} className="bg-white p-6 rounded-lg shadow-xl border border-gray-200 transform hover:scale-105 transition duration-300 relative">
-            <img src={team.photo} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4 shadow-md" />
+          <div key={team._id} className="bg-white p-6 rounded-lg shadow-xl">
+            <img src={team.photo} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4" />
             <h2 className="text-xl font-semibold text-gray-800 text-center">{team.name}</h2>
             <p className="text-center text-gray-600">{team.position}</p>
             <div className="flex justify-center mt-4 space-x-4">
-              <button onClick={() => handleEdit(team)} className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">Edit</button>
-              <button onClick={() => handleDelete(team._id)} className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600">Delete</button>
+              <button onClick={() => handleEdit(team)} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Edit</button>
+              <button onClick={() => handleDelete(team._id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center mt-6 space-x-4">
-        <button 
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="bg-gray-300 px-4 py-2 rounded-lg shadow-md hover:bg-gray-400 disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="text-lg font-semibold">Page {currentPage} of {totalPages}</span>
-        <button 
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="bg-gray-300 px-4 py-2 rounded-lg shadow-md hover:bg-gray-400 disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-
-      {/* Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      {/* Add Team Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-            <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">Edit Team Member</h2>
+            <h2 className="text-2xl font-semibold text-center mb-4">Add Team Member</h2>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               className="w-full p-2 border rounded-lg mb-4"
               placeholder="Name"
             />
             <input
               type="text"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
+              name="position"
+              value={formData.position}
+              onChange={handleChange}
               className="w-full p-2 border rounded-lg mb-4"
               placeholder="Position"
             />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full p-2 border rounded-lg mb-4"
+            />
+            {formData.photo && <img src={formData.photo} alt="Preview" className="w-full h-32 object-cover rounded-lg mb-4" />}
             <div className="flex justify-between">
-              <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded-lg">Save</button>
-              <button onClick={() => setShowModal(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
+              <button onClick={handleAddTeam} className="bg-green-500 text-white px-4 py-2 rounded-lg">Add</button>
+              <button onClick={() => setIsAddModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
             </div>
           </div>
         </div>
