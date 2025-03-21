@@ -31,7 +31,7 @@ const iconClasses = 'h-5 w-5'; // Adjusted icon size for consistency
 const routes = [
   {
     
-    icon: <Squares2X2Icon className={iconClasses} />,
+  
     name: 'Dashboard',
   },
   
@@ -43,7 +43,7 @@ const routes = [
 
   {
     path: '/app/About',
-    icon: <FcAbout className={iconClasses} />,
+  
     name: 'About',
   },
 
@@ -56,7 +56,7 @@ const routes = [
 
   {
     path: '/app/team',
-    icon: <MdCategory className={iconClasses} />,
+ 
     name: 'Teams',
   },
 
@@ -67,7 +67,7 @@ const routes = [
   },
   {
     path: '/app/Career',
-    icon: <FaUserAstronaut className={iconClasses} />,
+   
     name: 'View Candidates',
   },
   
@@ -78,7 +78,7 @@ const routes = [
   },
   {
     path: '/app/Job',
-    icon: <FaUserAstronaut className={iconClasses} />,
+    
     name: 'View Job',
   },
   {
@@ -88,7 +88,7 @@ const routes = [
   },
   {
     path: '/app/Service',
-    icon: <FaUserAstronaut className={iconClasses} />,
+
     name: 'View Service',
   },
   {
@@ -98,7 +98,7 @@ const routes = [
   },
   {
     path: '/app/Testimonial',
-    icon: <FaUserAstronaut className={iconClasses} />,
+
     name: 'View Testimonial',
   },
   {
@@ -106,7 +106,7 @@ const routes = [
   },
   {
     path: '/app/Contact',
-    icon: <FaUserAstronaut className={iconClasses} />,
+
     name: 'View Contact',
   },
   {
@@ -114,7 +114,7 @@ const routes = [
   },
   {
     path: '/app/Partnership',
-    icon: <FaUserAstronaut className={iconClasses} />,
+   
     name: 'View Partners',
   },
   
