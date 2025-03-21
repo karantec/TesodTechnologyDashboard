@@ -6,7 +6,7 @@ function ServiceList() {
    const [services, setServices] = useState([]);
    const [currentPage, setCurrentPage] = useState(1);
    const [selectedService, setSelectedService] = useState(null);
-   const [formData, setFormData] = useState({ name: "", category: "", description: "", image: "" });
+   const [formData, setFormData] = useState({ title: "", category: "", description: "", image: "" });
    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
    const servicesPerPage = 6;
@@ -17,7 +17,7 @@ function ServiceList() {
 
    const fetchServices = async () => {
       try {
-         const response = await axios.get("https://framedigitalbackend.onrender.com/product/Product");
+         const response = await axios.get("http://localhost:8000/services/");
          setServices(Array.isArray(response.data) ? response.data : [response.data]);
       } catch (err) {
          console.error("Failed to fetch services", err);
@@ -26,7 +26,7 @@ function ServiceList() {
 
    const handleDelete = async (serviceId) => {
       try {
-         await axios.delete(`https://framedigitalbackend.onrender.com/product/${serviceId}`);
+         await axios.delete(`http://localhost:8000/services/${serviceId}`);
          setServices(services.filter((service) => service._id !== serviceId));
       } catch (err) {
          console.error("Failed to delete service", err);
@@ -36,7 +36,7 @@ function ServiceList() {
    const handleEdit = (service) => {
       setSelectedService(service);
       setFormData({
-         name: service.name,
+        title: service.title,
          category: service.category,
          image: service.image,
          description: service.description,
@@ -45,7 +45,7 @@ function ServiceList() {
 
    const handleUpdate = async () => {
       try {
-         await axios.put(`https://framedigitalbackend.onrender.com/product/${selectedService._id}`, formData);
+         await axios.put(`http://localhost:8000/services/${selectedService._id}`, formData);
          setSelectedService(null);
          fetchServices();
       } catch (err) {
@@ -55,7 +55,7 @@ function ServiceList() {
 
    const handleCreate = async () => {
       try {
-         await axios.post("https://framedigitalbackend.onrender.com/product/creatProducts", formData);
+         await axios.post("http://localhost:8000/services/createService", formData);
          setIsCreateModalOpen(false);
          resetFormData();
          fetchServices();
@@ -65,7 +65,7 @@ function ServiceList() {
    };
 
    const resetFormData = () => {
-      setFormData({ name: "", category: "", description: "", image: "" });
+      setFormData({ title: "", category: "", description: "", image: "" });
    };
 
    const openCreateModal = () => {
@@ -107,14 +107,14 @@ function ServiceList() {
       return (
          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-lg w-96 shadow-xl">
-               <h3 className="text-lg font-bold text-gray-800">{title}</h3>
+               <h3 className="text-lg font-bold text-gray-800">Services</h3>
                <input 
                   type="text" 
-                  name="name"
-                  value={formData.name} 
+                  name="title"
+                  value={formData.title} 
                   onChange={handleChange} 
                   className="w-full mt-2 p-2 border rounded"
-                  placeholder="Service Name"
+                  placeholder="Service Title"
                />
                <input 
                   type="text"
@@ -164,14 +164,14 @@ function ServiceList() {
 
    return (
       <div className="p-6 min-h-screen bg-gray-100">
-         <TitleCard title="Product List">
+         <TitleCard title="Service List">
             {/* Add Service Button */}
             <div className="mb-6">
                <button 
                   onClick={openCreateModal}
                   className="px-4 py-2 bg-green-500 text-white rounded-md"
                >
-                  Add New Products
+                  Add New Service
                </button>
             </div>
 
@@ -186,7 +186,7 @@ function ServiceList() {
                         alt={service.name} 
                         className="w-full h-40 object-cover rounded-md"
                      />
-                     <h3 className="text-lg font-bold text-gray-800 mt-3">{service.name}</h3>
+                     <h3 className="text-lg font-bold text-gray-800 mt-3">{service.title}</h3>
                      <p className="text-sm text-gray-600"><strong>Category:</strong> {service.category}</p>
                      <p className="text-sm text-gray-600 mt-2">{service.description}</p>
 

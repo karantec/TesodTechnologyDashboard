@@ -9,7 +9,7 @@ const Dashboard = lazy(() => import('../pages/protected/Dashboard'))
 const Contacts=lazy(()=>import('../pages/protected/Contact'))
 const Partnership=lazy(()=>import('../pages/protected/Partnership'))
 const Teams =lazy(()=>import('../pages/protected/Category'))
-
+const Servicing=lazy(()=>import('../pages/protected/Service'))
 const Carrier = lazy(() => import('../pages/protected/Carrier'))
 const ServiceList=lazy(()=>import('../pages/protected/Order'));
 const ViewTestimonial=lazy(()=>import('../pages/protected/Blog'));
@@ -40,8 +40,12 @@ const routes = [
     component: FinanceAccounting,
   },
   {
+    path: '/Services',
+    component: Servicing,
+  },
+  {
     
-    path: '/Service',
+    path: '/Product',
     component: ServiceList,
   },
   {

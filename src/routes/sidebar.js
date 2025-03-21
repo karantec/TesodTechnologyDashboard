@@ -59,9 +59,19 @@ const routes = [
     name: 'Service Management',
   },
   {
-    path: '/app/Service',
+    path: '/app/Services',
 
-    name: 'View-Service',
+    name: 'View-Services',
+  },
+  {
+    
+ 
+    name: 'Product Management',
+  },
+  {
+    path: '/app/Product',
+
+    name: 'View-Product',
   },
   {
     
