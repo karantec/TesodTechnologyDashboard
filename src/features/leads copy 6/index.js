@@ -1,139 +1,160 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import TitleCard from "../../components/Cards/TitleCard";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-function AboutForm() {
-  const [about, setAbout] = useState("");
-  const [title, setTitle] = useState("");
-  const [description1, setDescription1] = useState("");
-  const [history, setHistory] = useState("");
-  const [establishmentYear, setEstablishmentYear] = useState("");
-  const [founder, setFounder] = useState("");
-  const [error, setError] = useState("");
+function AboutList() {
+   const [aboutData, setAboutData] = useState([]);
+   const [formData, setFormData] = useState({
+      title: "",
+      description: "",
+      image: ""
+   });
+   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = {
-      about,
-      title,
-      description1,
-      history,
-      establishmentYear,
-      founder,
-    };
+   useEffect(() => {
+      fetchAboutData();
+   }, []);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/about/create",
-        formData
-      );
+   const fetchAboutData = async () => {
+      try {
+         const response = await axios.get("http://localhost:8000/about/getAbout");
+         setAboutData(Array.isArray(response.data) ? response.data : [response.data]);
+      } catch (err) {
+         console.error("Failed to fetch about data", err);
+      }
+   };
 
-      console.log("About Created:", response.data);
+   const handleDelete = async (aboutId) => {
+      try {
+         await axios.delete(`http://localhost:8000/about/${aboutId}`);
+         setAboutData(aboutData.filter((about) => about._id !== aboutId));
+      } catch (err) {
+         console.error("Failed to delete about data", err);
+      }
+   };
 
-      setAbout("");
-      setTitle("");
-      setDescription1("");
-      setHistory("");
-      setEstablishmentYear("");
-      setFounder("");
-      setError("");
+   const handleCreate = async () => {
+      try {
+         await axios.post("http://localhost:8000/about/createAbout", formData);
+         setIsCreateModalOpen(false);
+         resetFormData();
+         fetchAboutData();
+      } catch (err) {
+         console.error("Failed to create about data", err);
+      }
+   };
 
-      toast.success("About section created successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    } catch (err) {
-      console.error("Failed to post category", err);
-      setError("Failed to post category. Please try again.");
+   const resetFormData = () => {
+      setFormData({ title: "", description: "", image: "" });
+   };
 
-      toast.error("Failed to create about section!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    }
-  };
+   const openCreateModal = () => {
+      resetFormData();
+      setIsCreateModalOpen(true);
+   };
 
-  return (
-    <div className="w-[100%] min-h-screen bg-white flex p-2">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-full   rounded-lg p-3 flex flex-col"
-      >
-       
-        {/* About & Title */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-5">
-          <input
-            type="text"
-            placeholder="About"
-            value={about}
-            onChange={(e) => setAbout(e.target.value)}
-            className="w-full p-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
-        </div>
+   const handleChange = (e) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+   };
 
-        {/* Description */}
-        <div className="w-full mt-6">
-          <p className="font-semibold mb-2">Description:</p>
-          <textarea
-            value={description1}
-            onChange={(e) => setDescription1(e.target.value)}
-            className="w-full p-4 border rounded-lg shadow-sm h-32 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            placeholder="Enter description here..."
-          />
-        </div>
+   const handleImageUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
 
-        {/* History */}
-        <div className="w-full mt-6">
-          <p className="font-semibold mb-2">History:</p>
-          <textarea
-            value={history}
-            onChange={(e) => setHistory(e.target.value)}
-            className="w-full p-4 border rounded-lg shadow-sm h-32 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            placeholder="Enter history here..."
-          />
-        </div>
+      const imageData = new FormData();
+      imageData.append("file", file);
+      imageData.append("upload_preset", "marketdata");
 
-        {/* Establishment Year & Founder */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-          <input
-            type="text"
-            placeholder="Establishment Year"
-            value={establishmentYear}
-            onChange={(e) => setEstablishmentYear(e.target.value)}
-            className="w-full p-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
-          <input
-            type="text"
-            placeholder="Founder"
-            value={founder}
-            onChange={(e) => setFounder(e.target.value)}
-            className="w-full p-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
-        </div>
+      try {
+         const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload",
+            imageData
+         );
+         setFormData((prev) => ({ ...prev, image: response.data.secure_url }));
+      } catch (err) {
+         console.error("Image upload failed", err);
+      }
+   };
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-4 rounded-lg font-semibold shadow-md transition duration-300 mt-8"
-        >
-          Post About Section
-        </button>
+   return (
+      <div className="p-6 min-h-screen bg-gray-100">
+         <TitleCard title="About Us">
+            <div className="mb-6">
+               <button 
+                  onClick={openCreateModal}
+                  className="px-4 py-2 bg-green-500 text-white rounded-md"
+               >
+                  Add New About Info
+               </button>
+            </div>
 
-        {/* Error Message */}
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-      </form>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               {aboutData.map((about) => (
+                  <div 
+                     key={about._id} 
+                     className="border rounded-lg p-5 shadow-lg bg-white hover:shadow-xl transition-all"
+                  >
+                     <img 
+                        src={about.image} 
+                        alt={about.title} 
+                        className="w-full h-40 object-cover rounded-md"
+                     />
+                     <h3 className="text-lg font-bold text-gray-800 mt-3">{about.title}</h3>
+                     <p className="text-sm text-gray-600 mt-2">{about.description}</p>
 
-      <ToastContainer />
-    </div>
-  );
+                     <div className="mt-4 flex justify-end">
+                        <button 
+                           onClick={() => handleDelete(about._id)}
+                           className="px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                           Delete
+                        </button>
+                     </div>
+                  </div>
+               ))}
+            </div>
+         </TitleCard>
+
+         {/* Create About Modal */}
+         {isCreateModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+               <div className="bg-white p-6 rounded-lg w-96 shadow-xl">
+                  <h3 className="text-lg font-bold text-gray-800">Add New About Info</h3>
+                  <input 
+                     type="text" 
+                     name="title"
+                     value={formData.title} 
+                     onChange={handleChange} 
+                     className="w-full mt-2 p-2 border rounded"
+                     placeholder="Title"
+                  />
+                  <textarea 
+                     name="description"
+                     value={formData.description} 
+                     onChange={handleChange} 
+                     className="w-full mt-2 p-2 border rounded"
+                     placeholder="Description"
+                  ></textarea>
+                  <input 
+                     type="file" 
+                     accept="image/*" 
+                     onChange={handleImageUpload} 
+                     className="w-full p-2 border rounded mt-2"
+                  />
+
+                  {formData.image && (
+                     <img src={formData.image} alt="Preview" className="w-full h-32 object-cover mt-2 rounded-md" />
+                  )}
+
+                  <div className="mt-4 flex justify-between">
+                     <button onClick={handleCreate} className="px-4 py-2 bg-green-500 text-white rounded-md">Save</button>
+                     <button onClick={() => setIsCreateModalOpen(false)} className="px-4 py-2 bg-red-500 text-white rounded-md">Cancel</button>
+                  </div>
+               </div>
+            </div>
+         )}
+      </div>
+   );
 }
 
-export default AboutForm;
+export default AboutList;

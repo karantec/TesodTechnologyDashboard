@@ -164,7 +164,7 @@ function ServiceList() {
 
    return (
       <div className="p-6 min-h-screen bg-gray-100">
-         <TitleCard title="Service List">
+         <TitleCard title="Product List">
             {/* Add Service Button */}
             <div className="mb-6">
                <button 

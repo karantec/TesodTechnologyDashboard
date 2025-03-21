@@ -30,6 +30,8 @@ const TermofServie=lazy(()=>import('../pages/TermofService'))
 const EditProfile=lazy(()=>import('../pages/protected/EditProfile'))
 const DocFeatures = lazy(() => import('../pages/DocFeatures'))
 const DocComponents = lazy(() => import('../pages/DocComponents'));
+const Contacts=lazy(()=>import('../pages/protected/Contact'))
+const Partnership=lazy(()=>import('../pages/protected/Partnership'))
 const Teams =lazy(()=>import('../pages/protected/Category'))
 const Feedback = lazy(() => import('../pages/protected/Feedback'))
 const Carrier = lazy(() => import('../pages/protected/Carrier'))
@@ -46,6 +48,11 @@ const routes = [
   {
     path: '/team',
     component: Teams,
+  },
+  
+  {
+    path: '/About',
+    component: About,
   },
 
   {
@@ -66,6 +73,17 @@ const routes = [
     path: '/testimonial',
     component: ViewTestimonial
   },
+  {
+    
+    path: '/Contact',
+    component: Contacts
+  },
+  {
+    
+    path: '/Partnership',
+    component: Partnership
+  },
+
   
 ]
 

@@ -8,7 +8,8 @@ const ViewCategoriesPage = () => {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [formData, setFormData] = useState({ name: '', position: '', photo: '' });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const teamsPerPage = 6;
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const teamsPerPage = 10;
 
   useEffect(() => {
     fetchTeams();
@@ -41,6 +42,7 @@ const ViewCategoriesPage = () => {
       position: team.position,
       photo: team.photo
     });
+    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (id) => {
@@ -55,6 +57,7 @@ const ViewCategoriesPage = () => {
   const handleUpdate = async () => {
     try {
       await axios.put(`https://framedigitalbackend.onrender.com/teams/Team/${selectedTeam._id}`, formData);
+      setIsEditModalOpen(false);
       setSelectedTeam(null);
       fetchTeams();
     } catch (err) {
@@ -88,6 +91,10 @@ const ViewCategoriesPage = () => {
   const currentTeams = teams.slice(indexOfFirstTeam, indexOfLastTeam);
   const totalPages = Math.ceil(teams.length / teamsPerPage);
 
+  const changePage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="p-2 min-h-screen">
       {error && <p className="text-red-500 text-center font-semibold">{error}</p>}
@@ -117,6 +124,23 @@ const ViewCategoriesPage = () => {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {teams.length > teamsPerPage && (
+        <div className="flex justify-center mt-6">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => changePage(i + 1)}
+              className={`mx-1 px-3 py-1 rounded ${
+                currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Add Team Modal */}
       {isAddModalOpen && (
@@ -149,6 +173,42 @@ const ViewCategoriesPage = () => {
             <div className="flex justify-between">
               <button onClick={handleAddTeam} className="bg-green-500 text-white px-4 py-2 rounded-lg">Add</button>
               <button onClick={() => setIsAddModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Team Modal */}
+      {isEditModalOpen && selectedTeam && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+            <h2 className="text-2xl font-semibold text-center mb-4">Edit Team Member</h2>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-lg mb-4"
+              placeholder="Name"
+            />
+            <input
+              type="text"
+              name="position"
+              value={formData.position}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-lg mb-4"
+              placeholder="Position"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full p-2 border rounded-lg mb-4"
+            />
+            {formData.photo && <img src={formData.photo} alt="Preview" className="w-full h-32 object-cover rounded-lg mb-4" />}
+            <div className="flex justify-between">
+              <button onClick={handleUpdate} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Update</button>
+              <button onClick={() => setIsEditModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
             </div>
           </div>
         </div>

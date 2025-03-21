@@ -101,6 +101,22 @@ const routes = [
     icon: <FaUserAstronaut className={iconClasses} />,
     name: 'View Testimonial',
   },
+  {
+    name: 'Contact Management',
+  },
+  {
+    path: '/app/Contact',
+    icon: <FaUserAstronaut className={iconClasses} />,
+    name: 'View Contact',
+  },
+  {
+    name: 'Partnership Management',
+  },
+  {
+    path: '/app/Partnership',
+    icon: <FaUserAstronaut className={iconClasses} />,
+    name: 'View Partners',
+  },
   
 ];
 
