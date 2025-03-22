@@ -12,7 +12,7 @@ function PartnershipList() {
 
    const fetchBrands = async () => {
       try {
-         const response = await axios.get("http://localhost:8000/Brand");
+         const response = await axios.get("https://framedigitalbackend.onrender.com/Brand");
          setBrands(response.data);
       } catch (err) {
          console.error("Failed to fetch brands", err);
@@ -21,7 +21,7 @@ function PartnershipList() {
 
    const deleteBrand = async (id) => {
       try {
-         await axios.delete(`http://localhost:8000/Brand/delete/${id}`);
+         await axios.delete(`https://framedigitalbackend.onrender.com/Brand/delete/${id}`);
          setBrands(brands.filter((brand) => brand._id !== id));
       } catch (err) {
          console.error("Failed to delete brand", err);
@@ -48,7 +48,7 @@ function PartnershipList() {
 
          const cloudinaryUrl = cloudinaryResponse.data.secure_url;
 
-         const response = await axios.post("http://localhost:8000/Brand/createBrand", {
+         const response = await axios.post("https://framedigitalbackend.onrender.com/Brand/createBrand", {
             name: newBrand.name,
             logoUrl: cloudinaryUrl
          });

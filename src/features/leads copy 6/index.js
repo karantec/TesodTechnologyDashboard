@@ -17,7 +17,7 @@ function AboutList() {
 
    const fetchAboutData = async () => {
       try {
-         const response = await axios.get("http://localhost:8000/about/getAbout");
+         const response = await axios.get("https://framedigitalbackend.onrender.com/about/getAbout");
          setAboutData(Array.isArray(response.data) ? response.data : [response.data]);
       } catch (err) {
          console.error("Failed to fetch about data", err);
@@ -26,7 +26,7 @@ function AboutList() {
 
    const handleDelete = async (aboutId) => {
       try {
-         await axios.delete(`http://localhost:8000/about/${aboutId}`);
+         await axios.delete(`https://framedigitalbackend.onrender.com/about/${aboutId}`);
          setAboutData(aboutData.filter((about) => about._id !== aboutId));
       } catch (err) {
          console.error("Failed to delete about data", err);
@@ -35,7 +35,7 @@ function AboutList() {
 
    const handleCreate = async () => {
       try {
-         await axios.post("http://localhost:8000/about/createAbout", formData);
+         await axios.post("https://framedigitalbackend.onrender.com/about/createAbout", formData);
          setIsCreateModalOpen(false);
          resetFormData();
          fetchAboutData();
