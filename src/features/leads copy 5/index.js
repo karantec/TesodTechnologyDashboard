@@ -114,7 +114,7 @@ const ViewCategoriesPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {currentTeams.map((team) => (
           <div key={team._id} className="bg-white p-6 rounded-lg shadow-xl">
-            <img src={team.image} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+            <img src={team.photo} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4" />
             <h2 className="text-xl font-semibold text-gray-800 text-center">{team.title}</h2>
          
             <div className="flex justify-center mt-4 space-x-4">
