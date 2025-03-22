@@ -17,7 +17,7 @@ const ViewCategoriesPage = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('https://tesodtechnologyfinal.onrender.com/category/getAllCategory');
+      const response = await axios.get('https://tesodtechnologyfinal.onrender.com/teams/Team');
       setTeams(response.data);
     } catch (err) {
       setError('Failed to fetch teams');
