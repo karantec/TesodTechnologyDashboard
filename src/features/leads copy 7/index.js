@@ -17,7 +17,7 @@ function ServiceList() {
 
    const fetchServices = async () => {
       try {
-         const response = await axios.get("https://framedigitalbackend.onrender.com/product/Product");
+         const response = await axios.get("https://tesodtechnologyfinal.onrender.com/product/Product");
          setServices(Array.isArray(response.data) ? response.data : [response.data]);
       } catch (err) {
          console.error("Failed to fetch services", err);
@@ -26,7 +26,7 @@ function ServiceList() {
 
    const handleDelete = async (serviceId) => {
       try {
-         await axios.delete(`https://framedigitalbackend.onrender.com/product/${serviceId}`);
+         await axios.delete(`https://tesodtechnologyfinal.onrender.com/product/${serviceId}`);
          setServices(services.filter((service) => service._id !== serviceId));
       } catch (err) {
          console.error("Failed to delete service", err);
@@ -45,7 +45,7 @@ function ServiceList() {
 
    const handleUpdate = async () => {
       try {
-         await axios.put(`https://framedigitalbackend.onrender.com/product/${selectedService._id}`, formData);
+         await axios.put(`https://tesodtechnologyfinal.onrender.com/product/${selectedService._id}`, formData);
          setSelectedService(null);
          fetchServices();
       } catch (err) {
@@ -55,7 +55,7 @@ function ServiceList() {
 
    const handleCreate = async () => {
       try {
-         await axios.post("https://framedigitalbackend.onrender.com/product/creatProducts", formData);
+         await axios.post("https://tesodtechnologyfinal.onrender.com/product/creatProducts", formData);
          setIsCreateModalOpen(false);
          resetFormData();
          fetchServices();

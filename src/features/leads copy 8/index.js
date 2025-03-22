@@ -23,7 +23,7 @@ function TestimonialList() {
   const fetchTestimonials = async () => {
     try {
       const response = await axios.get(
-        "https://framedigitalbackend.onrender.com/testimonial/Testimonial"
+        "https://tesodtechnologyfinal.onrender.com/testimonial/Testimonial"
       );
       setTestimonials(
         Array.isArray(response.data) ? response.data : [response.data]
@@ -36,7 +36,7 @@ function TestimonialList() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://framedigitalbackend.onrender.com/testimonial/${id}`
+        `https://tesodtechnologyfinal.onrender.com/testimonial/${id}`
       );
       setTestimonials(
         testimonials.filter((testimonial) => testimonial._id !== id)
@@ -61,7 +61,7 @@ function TestimonialList() {
     if (!editingTestimonial) return;
     try {
       await axios.put(
-        `https://framedigitalbackend.onrender.com/testimonial/${editingTestimonial._id}`,
+        `https://tesodtechnologyfinal.onrender.com/testimonial/${editingTestimonial._id}`,
         formData
       );
       setEditingTestimonial(null);
@@ -78,7 +78,7 @@ function TestimonialList() {
     }
     try {
       await axios.post(
-        "https://framedigitalbackend.onrender.com/testimonial/createTestimonail",
+        "https://tesodtechnologyfinal.onrender.com/testimonial/createTestimonail",
         formData
       );
       setAddingTestimonial(false);

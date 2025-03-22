@@ -12,7 +12,7 @@ const CarrierAccounting = () => {
 
   const fetchResumes = async () => {
     try {
-      const response = await axios.get("https://framedigitalbackend.onrender.com/resume/resume");
+      const response = await axios.get("https://tesodtechnologyfinal.onrender.com/resume/resume");
       setResumes(response.data);
     } catch (err) {
       setError("Failed to fetch resumes");
