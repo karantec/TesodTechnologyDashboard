@@ -6,25 +6,48 @@ const routes = [
   
     name: 'Dashboard',
   },
-  
+
   {
+    path: '/app/Gallery',
+  
+    name: 'View-Gallery',
+  },
+  {
+    path: '/app/Blog',
+  
+    name: 'View-Blog',
+  },
+
+  { 
+    name: 'RequestCallback'
     
-    
-    name: 'HomePage Management',
   },
 
   {
-    path: '/app/About',
+    path: '/app/Callback',
   
-    name: 'View-About',
+    name: 'View-Callback',
   },
 
 
-  
-  {
+  { 
+    name: 'RequestCallback'
     
-    name: 'Team Management',
   },
+
+  {
+    path: '/app/Callback',
+  
+    name: 'View-Callback',
+  },
+  
+
+  {
+    path: '/app/internship',
+  
+    name: 'View-Internship',
+  },
+  
 
   {
     path: '/app/team',
@@ -32,68 +55,44 @@ const routes = [
     name: 'View-Teams',
   },
 
-  {
-    
- 
-    name: 'Career Management',
-  },
+
   {
     path: '/app/Career',
    
     name: 'View-Candidates',
   },
   
-  {
-    
- 
-    name: 'Job Management',
-  },
+  
   {
     path: '/app/Job',
     
     name: 'View-Job',
   },
-  {
-    
- 
-    name: 'Service Management',
-  },
+  
   {
     path: '/app/Services',
 
     name: 'View-Services',
   },
-  {
-    
  
-    name: 'Product Management',
-  },
   {
     path: '/app/Product',
 
     name: 'View-Product',
   },
-  {
-    
  
-    name: 'Testimonial Management',
-  },
   {
     path: '/app/Testimonial',
 
     name: 'View-Testimonial',
   },
-  {
-    name: 'Contact Management',
-  },
+ 
   {
     path: '/app/Contact',
 
     name: 'View-Contact',
   },
-  {
-    name: 'Partnership Management',
-  },
+  
   {
     path: '/app/Partnership',
    

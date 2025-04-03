@@ -14,10 +14,11 @@ const ViewCategoriesPage = () => {
   useEffect(() => {
     fetchTeams();
   }, []);
-
+  
   const fetchTeams = async () => {
     try {
       const response = await axios.get('https://tesodtechnologyfinal.onrender.com/teams/Team');
+      console.log(response.data); // Debugging: Check API response
       setTeams(response.data);
     } catch (err) {
       setError('Failed to fetch teams');
@@ -112,17 +113,18 @@ const ViewCategoriesPage = () => {
 
       {/* Display Team Members */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-        {currentTeams.map((team) => (
-          <div key={team._id} className="bg-white p-6 rounded-lg shadow-xl">
-            <img src={team.photo} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4" />
-            <h2 className="text-xl font-semibold text-gray-800 text-center">{team.title}</h2>
-         
-            <div className="flex justify-center mt-4 space-x-4">
-              <button onClick={() => handleEdit(team)} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Edit</button>
-              <button onClick={() => handleDelete(team._id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</button>
-            </div>
-          </div>
-        ))}
+      {currentTeams.map((team) => (
+  <div key={team._id} className="bg-white p-6 rounded-lg shadow-xl">
+    {team.photo && <img src={team.photo} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4" />}
+    <h2 className="text-xl font-semibold text-gray-800 text-center">{team.name || 'No Name'}</h2>
+    <h2 className="text-xl font-semibold text-gray-800 text-center">{team.position || 'No Position'}</h2>
+    <div className="flex justify-center mt-4 space-x-4">
+      <button onClick={() => handleEdit(team)} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Edit</button>
+      <button onClick={() => handleDelete(team._id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</button>
+    </div>
+  </div>
+))}
+
       </div>
 
       {/* Pagination */}

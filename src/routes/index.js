@@ -13,9 +13,10 @@ const Servicing=lazy(()=>import('../pages/protected/Service'))
 const Carrier = lazy(() => import('../pages/protected/Carrier'))
 const ServiceList=lazy(()=>import('../pages/protected/Order'));
 const ViewTestimonial=lazy(()=>import('../pages/protected/Blog'));
-
-const About=lazy(()=>import('../pages/protected/About'));
-
+const Blog=lazy(()=>import('../pages/protected/Blogs'))
+const About=lazy(()=>import('../pages/protected/Gallery'));
+const Callback=lazy(()=>import('../pages/protected/Callbacks'))
+const Internships=lazy(()=>import('../pages/protected/Internship'));
 const routes = [
   { // the url
   component: Dashboard, // view rendered
@@ -30,6 +31,23 @@ const routes = [
     path: '/About',
     component: About,
   },
+  {
+    path: '/Gallery',
+    component: About,
+  },
+  {
+    path: '/Blog',
+    component:Blog,
+  },
+  {
+    path: '/Callback',
+    component:Callback,
+  },
+  {
+    path: '/internship',
+    component:Internships,
+  },
+
 
   {
     path: '/Career',
