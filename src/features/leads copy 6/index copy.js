@@ -17,7 +17,7 @@ function Blog() {
 
    const fetchBlogData = async () => {
       try {
-         const response = await axios.get("http://localhost:8000/blog/get");
+         const response = await axios.get("https://tesodtechnologyfinal.onrender.com/blog/get");
          setBlogData(Array.isArray(response.data) ? response.data : [response.data]);
       } catch (err) {
          console.error("Failed to fetch blog data", err);
@@ -26,7 +26,7 @@ function Blog() {
 
    const handleDelete = async (blogId) => {
       try {
-         await axios.delete(`http://localhost:8000/blog/${blogId}`);
+         await axios.delete(`https://tesodtechnologyfinal.onrender.com/blog/${blogId}`);
          setBlogData(blogData.filter((blog) => blog._id !== blogId));
       } catch (err) {
          console.error("Failed to delete blog post", err);
