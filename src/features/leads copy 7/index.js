@@ -18,7 +18,7 @@ function ServiceList() {
 
    const fetchServices = async () => {
       try {
-         const response = await axios.get("http://localhost:8000/product");
+         const response = await axios.get("https://tesodtechnologyfinal.onrender.com/product");
          setServices(Array.isArray(response.data) ? response.data : [response.data]);
       } catch (err) {
          console.error("Failed to fetch services", err);
@@ -27,7 +27,7 @@ function ServiceList() {
 
    const handleDelete = async (serviceId) => {
       try {
-         await axios.delete(`http://localhost:8000/product/${serviceId}`);
+         await axios.delete(`https://tesodtechnologyfinal.onrender.com/product/${serviceId}`);
          setServices(services.filter((service) => service._id !== serviceId));
       } catch (err) {
          console.error("Failed to delete service", err);
@@ -46,7 +46,7 @@ function ServiceList() {
          updateData.append("description", values.description);
          updateData.append("image", values.image);
 
-         await axios.put(`http://localhost:8000/product/${selectedService._id}`, updateData, {
+         await axios.put(`https://tesodtechnologyfinal.onrender.com/product/${selectedService._id}`, updateData, {
             headers: { "Content-Type": "multipart/form-data" },
          });
 
@@ -65,7 +65,7 @@ function ServiceList() {
          createData.append("description", values.description);
          createData.append("image", values.image);
 
-         await axios.post("http://localhost:8000/product/create", createData, {
+         await axios.post("https://tesodtechnologyfinal.onrender.com/product/create", createData, {
             headers: { "Content-Type": "multipart/form-data" },
          });
 
