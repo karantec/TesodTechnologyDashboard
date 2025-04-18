@@ -1,73 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ViewCategoriesPage = () => {
-  const [teams, setTeams] = useState([]);
+const ViewCrousel = () => {
+  const [crouselItems, setCrouselItems] = useState([]);
+  const [formData, setFormData] = useState({ title: '', description: '', image: '' });
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTeam, setSelectedTeam] = useState(null);
-  const [formData, setFormData] = useState({ name: '', position: '', photo: '' });
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const teamsPerPage = 10;
+  const itemsPerPage = 6;
 
   useEffect(() => {
-    fetchTeams();
+    fetchCrouselItems();
   }, []);
-  
-  const fetchTeams = async () => {
+
+  const fetchCrouselItems = async () => {
     try {
-      const response = await axios.get('https://tesodtechnologyfinal.onrender.com/teams/Team');
-      console.log(response.data); // Debugging: Check API response
-      setTeams(response.data);
+      const response = await axios.get('https://tesodtechnologyfinal.onrender.com/crousel');
+      setCrouselItems(response.data);
     } catch (err) {
-      setError('Failed to fetch teams');
+      setError('Failed to fetch carousel data');
     }
   };
 
-  const handleAddTeam = async () => {
+  const handleFormSubmit = async () => {
     try {
-      await axios.post('https://tesodtechnologyfinal.onrender.com/teams/creatTeam', formData);
-      setIsAddModalOpen(false);
-      setFormData({ name: '', position: '', photo: '' });
-      fetchTeams();
+      if (isEditMode) {
+        await axios.put(`https://tesodtechnologyfinal.onrender.com/crousel/${editId}`, formData);
+      } else {
+        await axios.post('https://tesodtechnologyfinal.onrender.com/crousel/create', formData);
+      }
+      resetForm();
+      fetchCrouselItems();
     } catch (err) {
-      setError('Failed to add team member');
+      setError('Failed to submit form');
     }
-  };
-
-  const handleEdit = (team) => {
-    setSelectedTeam(team);
-    setFormData({
-      name: team.name,
-      position: team.position,
-      photo: team.photo
-    });
-    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://tesodtechnologyfinal.onrender.com/teams/Team/${id}`);
-      setTeams(teams.filter(team => team._id !== id));
+      await axios.delete(`https://tesodtechnologyfinal.onrender.com/crousel/${id}`);
+      fetchCrouselItems();
     } catch (err) {
-      setError('Failed to delete team member');
+      setError('Failed to delete item');
     }
   };
 
-  const handleUpdate = async () => {
-    try {
-      await axios.put(`https://tesodtechnologyfinal.onrender.com/teams/Team/${selectedTeam._id}`, formData);
-      setIsEditModalOpen(false);
-      setSelectedTeam(null);
-      fetchTeams();
-    } catch (err) {
-      setError('Failed to update team member');
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleEdit = (item) => {
+    setFormData({
+      title: item.title,
+      description: item.description,
+      image: item.image,
+    });
+    setEditId(item._id);
+    setIsEditMode(true);
+    setIsModalOpen(true);
   };
 
   const handleImageUpload = async (e) => {
@@ -80,137 +68,128 @@ const ViewCategoriesPage = () => {
 
     try {
       const response = await axios.post('https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload', imageData);
-      setFormData((prev) => ({ ...prev, photo: response.data.secure_url }));
+      setFormData((prev) => ({ ...prev, image: response.data.secure_url }));
     } catch (err) {
       setError('Image upload failed');
     }
   };
 
-  // Pagination logic
-  const indexOfLastTeam = currentPage * teamsPerPage;
-  const indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
-  const currentTeams = teams.slice(indexOfFirstTeam, indexOfLastTeam);
-  const totalPages = Math.ceil(teams.length / teamsPerPage);
-
-  const changePage = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const resetForm = () => {
+    setFormData({ title: '', description: '', image: '' });
+    setIsModalOpen(false);
+    setIsEditMode(false);
+    setEditId(null);
+  };
+
+  // Pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = crouselItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(crouselItems.length / itemsPerPage);
+
   return (
-    <div className="p-2 min-h-screen">
-      {error && <p className="text-red-500 text-center font-semibold">{error}</p>}
+    <div className="p-4 min-h-screen bg-gray-100">
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-      <h2 className="text-3xl font-bold text-black mt-12 mb-6 text-center">Team Members</h2>
-
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold">Carousel Manager</h2>
         <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600"
+          onClick={() => {
+            setIsModalOpen(true);
+            setIsEditMode(false);
+            setFormData({ title: '', description: '', image: '' });
+          }}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
         >
-          Add Team Member
+          Add Carousel Item
         </button>
       </div>
 
-      {/* Display Team Members */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-      {currentTeams.map((team) => (
-  <div key={team._id} className="bg-white p-6 rounded-lg shadow-xl">
-    {team.photo && <img src={team.photo} alt={team.name} className="w-full h-48 object-cover rounded-lg mb-4" />}
-    <h2 className="text-xl font-semibold text-gray-800 text-center">{team.name || 'No Name'}</h2>
-    <h2 className="text-xl font-semibold text-gray-800 text-center">{team.position || 'No Position'}</h2>
-    <div className="flex justify-center mt-4 space-x-4">
-      <button onClick={() => handleEdit(team)} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Edit</button>
-      <button onClick={() => handleDelete(team._id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">Delete</button>
-    </div>
-  </div>
-))}
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentItems.map((item) => (
+          <div key={item._id} className="bg-white p-4 rounded-lg shadow relative">
+            {item.image && (
+              <img src={item.image} alt={item.title} className="w-full h-40 object-cover rounded-md mb-3" />
+            )}
+            <h3 className="text-xl font-semibold">{item.title}</h3>
+            <p className="text-gray-600">{item.description}</p>
+            <div className="absolute top-3 right-3 flex gap-2">
+              <button
+                onClick={() => handleEdit(item)}
+                className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(item._id)}
+                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Pagination */}
-      {teams.length > teamsPerPage && (
-        <div className="flex justify-center mt-6">
-          {Array.from({ length: totalPages }, (_, i) => (
+      {crouselItems.length > itemsPerPage && (
+        <div className="flex justify-center mt-6 space-x-2">
+          {Array.from({ length: totalPages }, (_, index) => (
             <button
-              key={i + 1}
-              onClick={() => changePage(i + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'
+              key={index + 1}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800'
               }`}
             >
-              {i + 1}
+              {index + 1}
             </button>
           ))}
         </div>
       )}
 
-      {/* Add Team Modal */}
-      {isAddModalOpen && (
+      {/* Modal */}
+      {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-            <h2 className="text-2xl font-semibold text-center mb-4">Add Team Member</h2>
+          <div className="bg-white p-6 rounded-lg w-96 shadow-xl">
+            <h2 className="text-xl font-semibold text-center mb-4">
+              {isEditMode ? 'Edit Carousel Item' : 'Add Carousel Item'}
+            </h2>
             <input
               type="text"
-              name="name"
-              value={formData.name}
+              name="title"
+              value={formData.title}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg mb-4"
-              placeholder="Name"
+              placeholder="Title"
+              className="w-full mb-3 p-2 border rounded"
             />
-            <input
-              type="text"
-              name="position"
-              value={formData.position}
+            <textarea
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg mb-4"
-              placeholder="Position"
+              placeholder="Description"
+              className="w-full mb-3 p-2 border rounded"
             />
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full p-2 border rounded-lg mb-4"
+              className="w-full mb-3 p-2 border rounded"
             />
-            {formData.photo && <img src={formData.photo} alt="Preview" className="w-full h-32 object-cover rounded-lg mb-4" />}
+            {formData.image && (
+              <img src={formData.image} alt="preview" className="w-full h-32 object-cover rounded mb-3" />
+            )}
             <div className="flex justify-between">
-              <button onClick={handleAddTeam} className="bg-green-500 text-white px-4 py-2 rounded-lg">Add</button>
-              <button onClick={() => setIsAddModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Team Modal */}
-      {isEditModalOpen && selectedTeam && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-            <h2 className="text-2xl font-semibold text-center mb-4">Edit Team Member</h2>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg mb-4"
-              placeholder="Name"
-            />
-            <input
-              type="text"
-              name="position"
-              value={formData.position}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg mb-4"
-              placeholder="Position"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="w-full p-2 border rounded-lg mb-4"
-            />
-            {formData.photo && <img src={formData.photo} alt="Preview" className="w-full h-32 object-cover rounded-lg mb-4" />}
-            <div className="flex justify-between">
-              <button onClick={handleUpdate} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Update</button>
-              <button onClick={() => setIsEditModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
+              <button onClick={handleFormSubmit} className="bg-green-600 text-white px-4 py-2 rounded-lg">
+                {isEditMode ? 'Update' : 'Submit'}
+              </button>
+              <button onClick={resetForm} className="bg-gray-400 text-white px-4 py-2 rounded-lg">
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -219,4 +198,4 @@ const ViewCategoriesPage = () => {
   );
 };
 
-export default ViewCategoriesPage;
+export default ViewCrousel;

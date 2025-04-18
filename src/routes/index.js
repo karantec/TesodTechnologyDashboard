@@ -21,6 +21,11 @@ const routes = [
   { // the url
   component: Dashboard, // view rendered
   },
+
+  {
+    path: '/croursel',
+    component: Teams,
+  },
  
   {
     path: '/team',
