@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const ViewCrousel = () => {
   const [crouselItems, setCrouselItems] = useState([]);
-  const [formData, setFormData] = useState({ title: '', description: '', image: '' });
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    image: "",
+  });
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -17,33 +21,43 @@ const ViewCrousel = () => {
 
   const fetchCrouselItems = async () => {
     try {
-      const response = await axios.get('https://tesodtechnologyfinal.onrender.com/crousel');
+      const response = await axios.get(
+        "https://tesodtechnologyfinal.onrender.com/crousel"
+      );
       setCrouselItems(response.data);
     } catch (err) {
-      setError('Failed to fetch carousel data');
+      setError("Failed to fetch carousel data");
     }
   };
 
   const handleFormSubmit = async () => {
     try {
       if (isEditMode) {
-        await axios.put(`https://tesodtechnologyfinal.onrender.com/crousel/${editId}`, formData);
+        await axios.put(
+          `https://tesodtechnologyfinal.onrender.com/crousel/${editId}`,
+          formData
+        );
       } else {
-        await axios.post('https://tesodtechnologyfinal.onrender.com/crousel/create', formData);
+        await axios.post(
+          "https://tesodtechnologyfinal.onrender.com/crousel/create",
+          formData
+        );
       }
       resetForm();
       fetchCrouselItems();
     } catch (err) {
-      setError('Failed to submit form');
+      setError("Failed to submit form");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://tesodtechnologyfinal.onrender.com/crousel/${id}`);
+      await axios.delete(
+        `https://tesodtechnologyfinal.onrender.com/crousel/${id}`
+      );
       fetchCrouselItems();
     } catch (err) {
-      setError('Failed to delete item');
+      setError("Failed to delete item");
     }
   };
 
@@ -63,14 +77,17 @@ const ViewCrousel = () => {
     if (!file) return;
 
     const imageData = new FormData();
-    imageData.append('file', file);
-    imageData.append('upload_preset', 'marketdata');
+    imageData.append("file", file);
+    imageData.append("upload_preset", "marketdata");
 
     try {
-      const response = await axios.post('https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload', imageData);
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload",
+        imageData
+      );
       setFormData((prev) => ({ ...prev, image: response.data.secure_url }));
     } catch (err) {
-      setError('Image upload failed');
+      setError("Image upload failed");
     }
   };
 
@@ -79,7 +96,7 @@ const ViewCrousel = () => {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', description: '', image: '' });
+    setFormData({ title: "", description: "", image: "" });
     setIsModalOpen(false);
     setIsEditMode(false);
     setEditId(null);
@@ -101,7 +118,7 @@ const ViewCrousel = () => {
           onClick={() => {
             setIsModalOpen(true);
             setIsEditMode(false);
-            setFormData({ title: '', description: '', image: '' });
+            setFormData({ title: "", description: "", image: "" });
           }}
           className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
         >
@@ -111,9 +128,16 @@ const ViewCrousel = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentItems.map((item) => (
-          <div key={item._id} className="bg-white p-4 rounded-lg shadow relative">
+          <div
+            key={item._id}
+            className="bg-white p-4 rounded-lg shadow relative"
+          >
             {item.image && (
-              <img src={item.image} alt={item.title} className="w-full h-40 object-cover rounded-md mb-3" />
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-40 object-cover rounded-md mb-3"
+              />
             )}
             <h3 className="text-xl font-semibold">{item.title}</h3>
             <p className="text-gray-600">{item.description}</p>
@@ -143,7 +167,9 @@ const ViewCrousel = () => {
               key={index + 1}
               onClick={() => setCurrentPage(index + 1)}
               className={`px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800'
+                currentPage === index + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-800"
               }`}
             >
               {index + 1}
@@ -157,7 +183,7 @@ const ViewCrousel = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg w-96 shadow-xl">
             <h2 className="text-xl font-semibold text-center mb-4">
-              {isEditMode ? 'Edit Carousel Item' : 'Add Carousel Item'}
+              {isEditMode ? "Edit Carousel Item" : "Add Carousel Item"}
             </h2>
             <input
               type="text"
@@ -181,13 +207,23 @@ const ViewCrousel = () => {
               className="w-full mb-3 p-2 border rounded"
             />
             {formData.image && (
-              <img src={formData.image} alt="preview" className="w-full h-32 object-cover rounded mb-3" />
+              <img
+                src={formData.image}
+                alt="preview"
+                className="w-full h-32 object-cover rounded mb-3"
+              />
             )}
             <div className="flex justify-between">
-              <button onClick={handleFormSubmit} className="bg-green-600 text-white px-4 py-2 rounded-lg">
-                {isEditMode ? 'Update' : 'Submit'}
+              <button
+                onClick={handleFormSubmit}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg"
+              >
+                {isEditMode ? "Update" : "Submit"}
               </button>
-              <button onClick={resetForm} className="bg-gray-400 text-white px-4 py-2 rounded-lg">
+              <button
+                onClick={resetForm}
+                className="bg-gray-400 text-white px-4 py-2 rounded-lg"
+              >
                 Cancel
               </button>
             </div>
