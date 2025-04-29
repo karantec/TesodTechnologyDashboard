@@ -9,6 +9,7 @@ function Gallery() {
   });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchGalleryData();
@@ -39,7 +40,7 @@ function Gallery() {
 
   const handleCreate = async () => {
     try {
-      setIsLoading(true);
+      setIsSubmitting(true);
       await axios.post("http://localhost:8000/gallery", formData);
       setIsCreateModalOpen(false);
       resetFormData();
@@ -47,7 +48,7 @@ function Gallery() {
     } catch (err) {
       console.error("Failed to create gallery item", err);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -95,7 +96,12 @@ function Gallery() {
           </button>
         </div>
 
-        {isLoading && <div className="text-center py-4">Loading...</div>}
+        {isLoading && (
+          <div className="text-center py-4">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
+            <p className="mt-2 text-gray-600">Loading gallery...</p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {galleryData.map((item) => (
@@ -145,10 +151,18 @@ function Gallery() {
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="w-full p-2 border rounded"
+                disabled={isLoading || isSubmitting}
               />
             </div>
 
-            {formData.image && (
+            {isLoading && (
+              <div className="mt-4 text-center py-4">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                <p className="mt-2 text-gray-600">Uploading image...</p>
+              </div>
+            )}
+
+            {formData.image && !isLoading && (
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Preview
@@ -164,15 +178,22 @@ function Gallery() {
             <div className="mt-6 flex justify-between">
               <button
                 onClick={handleCreate}
-                className="px-4 py-2 bg-green-500 text-white rounded-md"
-                disabled={!formData.image || isLoading}
+                className="px-4 py-2 bg-green-500 text-white rounded-md flex items-center justify-center min-w-[80px]"
+                disabled={!formData.image || isLoading || isSubmitting}
               >
-                {isLoading ? "Saving..." : "Save"}
+                {isSubmitting ? (
+                  <>
+                    <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+                    Saving...
+                  </>
+                ) : (
+                  "Save"
+                )}
               </button>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
                 className="px-4 py-2 bg-gray-500 text-white rounded-md"
-                disabled={isLoading}
+                disabled={isSubmitting}
               >
                 Cancel
               </button>
