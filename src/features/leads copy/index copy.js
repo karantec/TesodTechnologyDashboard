@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
 import TitleCard from "../../components/Cards/TitleCard";
 import axios from "axios";
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
 
 function ServiceList() {
   const [services, setServices] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedService, setSelectedService] = useState(null);
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    description: "",
-    image: "",
-  });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const servicesPerPage = 6;
@@ -46,19 +42,13 @@ function ServiceList() {
 
   const handleEdit = (service) => {
     setSelectedService(service);
-    setFormData({
-      title: service.title,
-      category: service.category,
-      image: service.image,
-      description: service.description,
-    });
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (values) => {
     try {
       await axios.put(
         `https://tesodtechnologyfinal.onrender.com/services/${selectedService._id}`,
-        formData
+        values
       );
       setSelectedService(null);
       fetchServices();
@@ -67,14 +57,13 @@ function ServiceList() {
     }
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (values) => {
     try {
       await axios.post(
         "https://tesodtechnologyfinal.onrender.com/services/createService",
-        formData
+        values
       );
       setIsCreateModalOpen(false);
-      resetFormData();
       fetchServices();
     } catch (err) {
       console.error("Failed to create service", err);
@@ -82,7 +71,7 @@ function ServiceList() {
   };
 
   const resetFormData = () => {
-    setFormData({ title: "", category: "", description: "", image: "" });
+    setSelectedService(null);
   };
 
   const openCreateModal = () => {
@@ -90,11 +79,7 @@ function ServiceList() {
     setIsCreateModalOpen(true);
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (setFieldValue, e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -107,7 +92,7 @@ function ServiceList() {
         "https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload", // Replace with your Cloudinary cloud name
         imageData
       );
-      setFormData((prev) => ({ ...prev, image: response.data.secure_url }));
+      setFieldValue("image", response.data.secure_url);
     } catch (err) {
       console.error("Image upload failed", err);
     }
@@ -120,67 +105,98 @@ function ServiceList() {
     indexOfLastService
   );
 
+  // Validation schema for Formik
+  const serviceSchema = Yup.object().shape({
+    title: Yup.string().required("Title is required"),
+    category: Yup.string().required("Category is required"),
+    description: Yup.string().required("Description is required"),
+    image: Yup.string().required("Image is required"),
+  });
+
   // Form Modal component to be reused for both create and edit
-  const ServiceFormModal = ({ title, onSubmit, onCancel, isOpen }) => {
+  const ServiceFormModal = ({ title, onSubmit, isOpen, initialValues }) => {
     if (!isOpen) return null;
 
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div className="bg-white p-6 rounded-lg w-96 shadow-xl">
-          <h3 className="text-lg font-bold text-gray-800">Services</h3>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full mt-2 p-2 border rounded"
-            placeholder="Service Title"
-          />
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="w-full mt-2 p-2 border rounded"
-            placeholder="Category"
-          />
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full mt-2 p-2 border rounded"
-            placeholder="Description"
-          ></textarea>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="w-full p-2 border rounded mt-2"
-          />
+          <h3 className="text-lg font-bold text-gray-800">{title}</h3>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={serviceSchema}
+            onSubmit={onSubmit}
+          >
+            {({ setFieldValue, values, errors, touched }) => (
+              <Form>
+                <Field
+                  type="text"
+                  name="title"
+                  placeholder="Service Title"
+                  className="w-full mt-2 p-2 border rounded"
+                />
+                {errors.title && touched.title && (
+                  <div className="text-red-500 text-sm">{errors.title}</div>
+                )}
 
-          {/* Preview Current Image */}
-          {formData.image && (
-            <img
-              src={formData.image}
-              alt="Service Preview"
-              className="w-full h-32 object-cover mt-2 rounded-md"
-            />
-          )}
+                <Field
+                  type="text"
+                  name="category"
+                  placeholder="Category"
+                  className="w-full mt-2 p-2 border rounded"
+                />
+                {errors.category && touched.category && (
+                  <div className="text-red-500 text-sm">{errors.category}</div>
+                )}
 
-          <div className="mt-4 flex justify-between">
-            <button
-              onClick={onSubmit}
-              className="px-4 py-2 bg-green-500 text-white rounded-md"
-            >
-              Save
-            </button>
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 bg-red-500 text-white rounded-md"
-            >
-              Cancel
-            </button>
-          </div>
+                <Field
+                  as="textarea"
+                  name="description"
+                  placeholder="Description"
+                  className="w-full mt-2 p-2 border rounded"
+                />
+                {errors.description && touched.description && (
+                  <div className="text-red-500 text-sm">
+                    {errors.description}
+                  </div>
+                )}
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(setFieldValue, e)}
+                  className="w-full p-2 border rounded mt-2"
+                />
+                {errors.image && touched.image && (
+                  <div className="text-red-500 text-sm">{errors.image}</div>
+                )}
+
+                {/* Preview Current Image */}
+                {values.image && (
+                  <img
+                    src={values.image}
+                    alt="Service Preview"
+                    className="w-full h-32 object-cover mt-2 rounded-md"
+                  />
+                )}
+
+                <div className="mt-4 flex justify-between">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-green-500 text-white rounded-md"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetFormData}
+                    className="px-4 py-2 bg-red-500 text-white rounded-md"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
     );
@@ -266,16 +282,23 @@ function ServiceList() {
       <ServiceFormModal
         title="Add New Service"
         onSubmit={handleCreate}
-        onCancel={() => setIsCreateModalOpen(false)}
         isOpen={isCreateModalOpen}
+        initialValues={{ title: "", category: "", description: "", image: "" }}
       />
 
       {/* Edit Service Modal */}
       <ServiceFormModal
         title="Edit Service"
         onSubmit={handleUpdate}
-        onCancel={() => setSelectedService(null)}
         isOpen={!!selectedService}
+        initialValues={
+          selectedService || {
+            title: "",
+            category: "",
+            description: "",
+            image: "",
+          }
+        }
       />
     </div>
   );
