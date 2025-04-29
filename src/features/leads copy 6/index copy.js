@@ -18,7 +18,9 @@ function Gallery() {
   const fetchGalleryData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:8000/gallery");
+      const response = await axios.get(
+        "https://tesodtechnologyfinal.onrender.com/gallery"
+      );
       setGalleryData(
         Array.isArray(response.data) ? response.data : [response.data]
       );
@@ -31,7 +33,9 @@ function Gallery() {
 
   const handleDelete = async (itemId) => {
     try {
-      await axios.delete(`http://localhost:8000/gallery/${itemId}`);
+      await axios.delete(
+        `https://tesodtechnologyfinal.onrender.com/gallery/${itemId}`
+      );
       setGalleryData(galleryData.filter((item) => item._id !== itemId));
     } catch (err) {
       console.error("Failed to delete gallery item", err);
@@ -41,7 +45,10 @@ function Gallery() {
   const handleCreate = async () => {
     try {
       setIsSubmitting(true);
-      await axios.post("http://localhost:8000/gallery", formData);
+      await axios.post(
+        "https://tesodtechnologyfinal.onrender.com/gallery",
+        formData
+      );
       setIsCreateModalOpen(false);
       resetFormData();
       fetchGalleryData();
