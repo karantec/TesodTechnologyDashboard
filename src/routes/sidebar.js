@@ -1,11 +1,6 @@
 /** Icons are imported separately to reduce build time */
 // Define routes for the sidebar with paths, icons, and names
 const routes = [
-  {
-    
-  
-    name: 'Dashboard',
-  },
 
   {
     path: '/app/Gallery',
@@ -18,22 +13,12 @@ const routes = [
     name: 'View-Blog',
   },
 
-  { 
-    name: 'RequestCallback'
-    
-  },
-
   {
     path: '/app/Callback',
   
     name: 'View-Callback',
   },
 
-
-  { 
-    name: 'RequestCallback'
-    
-  },
 
   {
     path: '/app/Callback',

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createBlog, updateBlog, getBlogById } from '../../../app/api';
-import { addBlog, updateBlog as updateBlogAction, setError } from '../blogSlice';
+import { addBlog, updateBlog as updateBlogAction, setError, setLoading } from '../blogSlice';
 import InputText from '../../../components/Input/InputText';
 import ErrorText from '../../../components/Typography/ErrorText';
 
@@ -10,7 +10,6 @@ const BlogForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
-    const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [image, setImage] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
@@ -30,7 +29,7 @@ const BlogForm = () => {
 
     const fetchBlog = async () => {
         try {
-            setLoading(true);
+            dispatch(setLoading(true));
             const response = await getBlogById(id);
             if (response.status) {
                 const blog = response.data;
@@ -47,7 +46,7 @@ const BlogForm = () => {
         } catch (error) {
             setErrorMessage(error.message || 'Something went wrong');
         } finally {
-            setLoading(false);
+            dispatch(setLoading(false));
         }
     };
 
@@ -62,7 +61,7 @@ const BlogForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
-
+        
         // Validation
         if (!formData.title.trim()) return setErrorMessage('Title is required');
         if (!formData.content.trim()) return setErrorMessage('Content is required');
@@ -76,8 +75,8 @@ const BlogForm = () => {
             submitData.append('image', image);
         }
 
-        setLoading(true);
         try {
+            dispatch(setLoading(true));
             const response = id
                 ? await updateBlog(id, submitData)
                 : await createBlog(submitData);
@@ -95,7 +94,7 @@ const BlogForm = () => {
         } catch (error) {
             setErrorMessage(error.message || 'Something went wrong');
         } finally {
-            setLoading(false);
+            dispatch(setLoading(false));
         }
     };
 
@@ -170,7 +169,7 @@ const BlogForm = () => {
                         </div>
                     )}
 
-                    <ErrorText>{errorMessage}</ErrorText>
+                    {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
 
                     <div className="flex gap-4">
                         <button

@@ -47,7 +47,14 @@ const BlogList = () => {
         }
     };
 
-    if (loading) return <div className="flex justify-center items-center h-full">Loading...</div>;
+    if (loading) return (
+        <div className="flex justify-center items-center h-full">
+            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-blue-600" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    );
+
     if (error) return <div className="text-red-500 text-center">{error}</div>;
 
     return (
@@ -97,20 +104,19 @@ const BlogList = () => {
             {deleteConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg">
-                        <h3 className="text-lg font-bold mb-4">Confirm Delete</h3>
-                        <p>Are you sure you want to delete this blog post?</p>
-                        <div className="flex justify-end gap-4 mt-4">
-                            <button 
-                                className="btn btn-ghost"
+                        <p>Are you sure you want to delete this blog?</p>
+                        <div className="flex gap-4 mt-4">
+                            <button
+                                className="btn btn-sm btn-error"
+                                onClick={() => handleDelete(deleteConfirmation)}
+                            >
+                                Yes, Delete
+                            </button>
+                            <button
+                                className="btn btn-sm btn-ghost"
                                 onClick={() => setDeleteConfirmation(null)}
                             >
                                 Cancel
-                            </button>
-                            <button 
-                                className="btn btn-error"
-                                onClick={() => handleDelete(deleteConfirmation)}
-                            >
-                                Delete
                             </button>
                         </div>
                     </div>
