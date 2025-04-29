@@ -11,6 +11,11 @@ const routes = [
 
     name: "View-Blog",
   },
+  {
+    path: "/app/croursel",
+
+    name: "View-Crousel",
+  },
 
   {
     path: "/app/Callback",

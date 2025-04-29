@@ -1,19 +1,17 @@
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { setPageTitle } from '../../features/common/headerSlice'
-import ViewCategoriesPage from '../../features/leads copy 5'
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setPageTitle } from "../../features/common/headerSlice";
 
-function InternalPage(){
-    const dispatch = useDispatch()
+import ViewTeam from "../../features/leads copy 5/index copy";
 
-    useEffect(() => {
-        dispatch(setPageTitle({ title : "Teams" }))
-      }, [])
+function InternalPage() {
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(setPageTitle({ title: "Teams" }));
+  }, []);
 
-return(
-        <ViewCategoriesPage/>
-    )
+  return <ViewTeam />;
 }
 
-export default InternalPage
+export default InternalPage;
