@@ -23,7 +23,9 @@ const ViewTeam = () => {
 
   const fetchTeamMembers = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/teams/Team");
+      const response = await axios.get(
+        "https://tesodtechnologyfinal.onrender.com/teams/Team"
+      );
       setTeamMembers(response.data);
     } catch (err) {
       setError("Failed to fetch team data");
@@ -34,9 +36,15 @@ const ViewTeam = () => {
     setIsSubmitting(true);
     try {
       if (isEditMode) {
-        await axios.put(`http://localhost:8000/teams/Team/${editId}`, formData);
+        await axios.put(
+          `https://tesodtechnologyfinal.onrender.com/teams/Team/${editId}`,
+          formData
+        );
       } else {
-        await axios.post("http://localhost:8000/teams/creatTeam", formData);
+        await axios.post(
+          "https://tesodtechnologyfinal.onrender.com/teams/creatTeam",
+          formData
+        );
       }
       resetForm();
       fetchTeamMembers();
@@ -49,7 +57,9 @@ const ViewTeam = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/teams/Team/${id}`);
+      await axios.delete(
+        `https://tesodtechnologyfinal.onrender.com/teams/Team/${id}`
+      );
       fetchTeamMembers();
     } catch (err) {
       setError("Failed to delete item");

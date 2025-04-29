@@ -2,62 +2,52 @@ import { useState, useEffect } from "react";
 import TitleCard from "../../components/Cards/TitleCard";
 import axios from "axios";
 
-function InternshipForm() {
-  const [internshipData, setInternshipData] = useState([]);
+function CallbackForm() {
+  const [callbackData, setCallbackData] = useState([]);
 
   useEffect(() => {
-    fetchInternshipData();
+    fetchCallbackData();
   }, []);
 
-  const fetchInternshipData = async () => {
+  const fetchCallbackData = async () => {
     try {
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/internship/internships"
+        "https://tesodtechnologyfinal.onrender.com/callback/callback-requests"
       );
-      setInternshipData(
+      setCallbackData(
         Array.isArray(response.data) ? response.data : [response.data]
       );
     } catch (err) {
-      console.error("Failed to fetch internship applications", err);
+      console.error("Failed to fetch callback requests", err);
     }
   };
 
   return (
     <div className="p-6 min-h-screen bg-gray-100">
-      <TitleCard title="Internship Applications">
+      <TitleCard title="Callback Requests">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {internshipData.map((intern) => (
+          {callbackData.map((request) => (
             <div
-              key={intern._id}
+              key={request._id}
               className="border rounded-lg p-5 shadow-lg bg-white hover:shadow-xl transition-all"
             >
               <h3 className="text-lg font-bold text-gray-800">
-                {intern.fullName}
+                {request.fullName}
               </h3>
               <p className="text-sm text-gray-600 mt-2">
-                <strong>Email:</strong> {intern.email}
+                <strong>Email:</strong> {request.email}
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                <strong>Phone:</strong> {intern.phone}
+                <strong>Phone:</strong> {request.phoneNumber}
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                <strong>College:</strong> {intern.college}
+                <strong>Preferred Date:</strong> {request.preferredDate}
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                <strong>Degree:</strong> {intern.degree}
+                <strong>Preferred Time:</strong> {request.preferredTime}
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                <strong>Internship Duration:</strong> {intern.startDate} -{" "}
-                {intern.endDate}
-              </p>
-              <p className="text-sm text-gray-600 mt-1">
-                <strong>Domain:</strong> {intern.internshipDomain}
-              </p>
-              <p className="text-sm text-gray-600 mt-1">
-                <strong>Project:</strong> {intern.projectTitle}
-              </p>
-              <p className="text-sm text-gray-600 mt-1">
-                <strong>Skills Gained:</strong> {intern.skillsGained.join(", ")}
+                <strong>Message:</strong> {request.message || "No message"}
               </p>
             </div>
           ))}
@@ -67,4 +57,4 @@ function InternshipForm() {
   );
 }
 
-export default InternshipForm;
+export default CallbackForm;
