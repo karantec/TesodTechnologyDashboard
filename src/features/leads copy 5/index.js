@@ -13,6 +13,7 @@ const ViewCrousel = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const itemsPerPage = 6;
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const ViewCrousel = () => {
   };
 
   const handleFormSubmit = async () => {
+    setIsSubmitting(true);
     try {
       if (isEditMode) {
         await axios.put(
@@ -47,6 +49,8 @@ const ViewCrousel = () => {
       fetchCrouselItems();
     } catch (err) {
       setError("Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -216,9 +220,35 @@ const ViewCrousel = () => {
             <div className="flex justify-between">
               <button
                 onClick={handleFormSubmit}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center justify-center min-w-[100px]"
+                disabled={isSubmitting}
               >
-                {isEditMode ? "Update" : "Submit"}
+                {isSubmitting ? (
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    ></path>
+                  </svg>
+                ) : isEditMode ? (
+                  "Update"
+                ) : (
+                  "Submit"
+                )}
               </button>
               <button
                 onClick={resetForm}

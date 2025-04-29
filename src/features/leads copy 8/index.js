@@ -8,6 +8,7 @@ function TestimonialList() {
   const testimonialsPerPage = 6;
   const [editingTestimonial, setEditingTestimonial] = useState(null);
   const [addingTestimonial, setAddingTestimonial] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     position: "",
@@ -35,14 +36,17 @@ function TestimonialList() {
 
   const handleDelete = async (id) => {
     try {
+      setIsLoading(true);
       await axios.delete(
         `https://tesodtechnologyfinal.onrender.com/testimonial/${id}`
       );
       setTestimonials(
         testimonials.filter((testimonial) => testimonial._id !== id)
       );
+      setIsLoading(false);
     } catch (err) {
       console.error("Failed to delete testimonial", err);
+      setIsLoading(false);
     }
   };
 
@@ -60,14 +64,17 @@ function TestimonialList() {
   const handleUpdate = async () => {
     if (!editingTestimonial) return;
     try {
+      setIsLoading(true);
       await axios.put(
         `https://tesodtechnologyfinal.onrender.com/testimonial/${editingTestimonial._id}`,
         formData
       );
       setEditingTestimonial(null);
-      fetchTestimonials();
+      await fetchTestimonials();
+      setIsLoading(false);
     } catch (err) {
       console.error("Failed to update testimonial", err);
+      setIsLoading(false);
     }
   };
 
@@ -77,6 +84,7 @@ function TestimonialList() {
       return;
     }
     try {
+      setIsLoading(true);
       await axios.post(
         "https://tesodtechnologyfinal.onrender.com/testimonial/createTestimonail",
         formData
@@ -89,9 +97,11 @@ function TestimonialList() {
         message: "",
         photo: "",
       }); // Reset form
-      fetchTestimonials();
+      await fetchTestimonials();
+      setIsLoading(false);
     } catch (err) {
       console.error("Failed to add testimonial", err);
+      setIsLoading(false);
     }
   };
 
@@ -108,13 +118,16 @@ function TestimonialList() {
     imageData.append("upload_preset", "marketdata");
 
     try {
+      setIsLoading(true);
       const response = await axios.post(
         "https://api.cloudinary.com/v1_1/de4ks8mkh/image/upload",
         imageData
       );
       setFormData((prev) => ({ ...prev, photo: response.data.secure_url }));
+      setIsLoading(false);
     } catch (err) {
       console.error("Image upload failed", err);
+      setIsLoading(false);
     }
   };
 
@@ -123,6 +136,13 @@ function TestimonialList() {
   const currentTestimonials = testimonials.slice(
     indexOfFirstTestimonial,
     indexOfLastTestimonial
+  );
+
+  // Loader component
+  const Loader = () => (
+    <div className="flex justify-center items-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
   );
 
   return (
@@ -176,7 +196,7 @@ function TestimonialList() {
         </div>
       </TitleCard>
 
-      {/* Add Testimonial Modal */}
+      {/* Add/Edit Testimonial Modal */}
       {(addingTestimonial || editingTestimonial) && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg w-96 shadow-xl">
@@ -231,26 +251,45 @@ function TestimonialList() {
               />
             )}
 
-            <button
-              onClick={editingTestimonial ? handleUpdate : handleAdd}
-              className={`mt-4 w-full px-4 py-2 rounded-md ${
-                formData.photo
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-              disabled={!formData.photo}
-            >
-              {editingTestimonial ? "Update" : "Add"}
-            </button>
-            <button
-              onClick={() => {
-                setEditingTestimonial(null);
-                setAddingTestimonial(false);
-              }}
-              className="mt-2 w-full px-4 py-2 bg-gray-400 text-white rounded-md"
-            >
-              Cancel
-            </button>
+            <div className="mt-4">
+              {isLoading ? (
+                <div className="flex justify-center py-2">
+                  <Loader />
+                </div>
+              ) : (
+                <button
+                  onClick={editingTestimonial ? handleUpdate : handleAdd}
+                  className={`w-full px-4 py-2 rounded-md ${
+                    formData.photo
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                  disabled={!formData.photo || isLoading}
+                >
+                  {editingTestimonial ? "Update" : "Add"}
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setEditingTestimonial(null);
+                  setAddingTestimonial(false);
+                }}
+                className="mt-2 w-full px-4 py-2 bg-gray-400 text-white rounded-md"
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full-page loading overlay for delete operations */}
+      {isLoading && !addingTestimonial && !editingTestimonial && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+            <Loader />
+            <p className="mt-4 text-gray-700">Processing...</p>
           </div>
         </div>
       )}
