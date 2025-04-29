@@ -5,6 +5,7 @@ import { lazy } from "react";
 import FinanceAccounting from "../features/leads copy";
 import ViewCrousel from "../features/leads copy 5";
 import InternshipForm from "../features/leads copy 6/index copy 4";
+import ProductManager from "../features/leads copy 6/index copy 3";
 
 const Dashboard = lazy(() => import("../pages/protected/Dashboard"));
 
@@ -66,7 +67,7 @@ const routes = [
   },
   {
     path: "/Product",
-    component: ServiceList,
+    component: ProductManager,
   },
   {
     path: "/testimonial",
