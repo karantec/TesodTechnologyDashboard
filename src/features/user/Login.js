@@ -65,7 +65,7 @@ function Login() {
                     {/* Image Section */}
                     <div className="hidden md:block relative">
                         <img
-                            src="Designer2.jpeg"
+                            src="/logo2.png"
                             alt="Login Visual"
                             className="w-full h-full object-cover"
                         />
