@@ -47,7 +47,7 @@ function ServiceList() {
   const handleUpdate = async (values) => {
     try {
       await axios.put(
-        `http://localhost:8000/services/${selectedService._id}`,
+        `https://tesodtechnologyfinal.onrender.com/services/${selectedService._id}`,
         values
       );
       setSelectedService(null);
