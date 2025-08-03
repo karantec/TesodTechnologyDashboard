@@ -14,7 +14,7 @@ const FinanceAccounting = () => {
     employmentType: "Remote", // Default value from enum
     keySkills: "",
     keyResponsibilities: "",
-    applyLink: ""
+    applyLink: "",
   });
   const jobsPerPage = 5;
 
@@ -28,7 +28,9 @@ const FinanceAccounting = () => {
   const fetchJobs = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://tesodtechnologyfinal.onrender.com/job/job");
+      const response = await axios.get(
+        "https://backend.tesodtechnology.com/job/job"
+      );
       setJobs(response.data);
       setError(null);
     } catch (err) {
@@ -41,7 +43,7 @@ const FinanceAccounting = () => {
 
   const deleteJob = async (jobId) => {
     try {
-      await axios.delete(`https://tesodtechnologyfinal.onrender.com/job/${jobId}`);
+      await axios.delete(`https://backend.tesodtechnology.com/job/${jobId}`);
       setJobs(jobs.filter((job) => job._id !== jobId));
     } catch (err) {
       alert("Failed to delete job");
@@ -50,10 +52,12 @@ const FinanceAccounting = () => {
   };
 
   const openEditModal = (job) => {
-    setEditingJob({ 
-      ...job, 
-      keySkills: Array.isArray(job.keySkills) ? job.keySkills.join(", ") : "", 
-      keyResponsibilities: Array.isArray(job.keyResponsibilities) ? job.keyResponsibilities.join("\n") : "" 
+    setEditingJob({
+      ...job,
+      keySkills: Array.isArray(job.keySkills) ? job.keySkills.join(", ") : "",
+      keyResponsibilities: Array.isArray(job.keyResponsibilities)
+        ? job.keyResponsibilities.join("\n")
+        : "",
     });
     setEditModal(true);
   };
@@ -72,14 +76,25 @@ const FinanceAccounting = () => {
 
       const updatedJob = {
         ...editingJob,
-        keySkills: editingJob.keySkills.split(",").map((skill) => skill.trim()).filter(skill => skill),
-        keyResponsibilities: editingJob.keyResponsibilities.split("\n").map((resp) => resp.trim()).filter(resp => resp),
+        keySkills: editingJob.keySkills
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter((skill) => skill),
+        keyResponsibilities: editingJob.keyResponsibilities
+          .split("\n")
+          .map((resp) => resp.trim())
+          .filter((resp) => resp),
       };
 
-      const response = await axios.put(`https://tesodtechnologyfinal.onrender.com/job/${editingJob._id}`, updatedJob);
-      
+      const response = await axios.put(
+        `https://backend.tesodtechnology.com/job/${editingJob._id}`,
+        updatedJob
+      );
+
       // Update the job in the local state using the response data
-      setJobs(jobs.map((job) => (job._id === editingJob._id ? response.data : job)));
+      setJobs(
+        jobs.map((job) => (job._id === editingJob._id ? response.data : job))
+      );
       setEditModal(false);
     } catch (err) {
       alert("Failed to update job");
@@ -123,8 +138,14 @@ const FinanceAccounting = () => {
       // Format the data before sending
       const jobData = {
         ...newJob,
-        keySkills: newJob.keySkills.split(",").map((skill) => skill.trim()).filter(skill => skill),
-        keyResponsibilities: newJob.keyResponsibilities.split("\n").map((resp) => resp.trim()).filter(resp => resp),
+        keySkills: newJob.keySkills
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter((skill) => skill),
+        keyResponsibilities: newJob.keyResponsibilities
+          .split("\n")
+          .map((resp) => resp.trim())
+          .filter((resp) => resp),
       };
 
       // Validate the job data
@@ -132,23 +153,28 @@ const FinanceAccounting = () => {
         return;
       }
 
-      const response = await axios.post("https://tesodtechnologyfinal.onrender.com/job/createJob", jobData);
-      
+      const response = await axios.post(
+        "https://backend.tesodtechnology.com/job/createJob",
+        jobData
+      );
+
       // Add the new job to the state and close the modal
       // Make sure to use the response data which includes the generated _id
-      setJobs(prevJobs => [...prevJobs, response.data]);
+      setJobs((prevJobs) => [...prevJobs, response.data]);
       setAddModal(false);
-      
+
       // Reset the new job form
       setNewJob({
         jobTitle: "",
         employmentType: "Remote",
         keySkills: "",
         keyResponsibilities: "",
-        applyLink: ""
+        applyLink: "",
       });
     } catch (err) {
-      alert("Failed to add job: " + (err.response?.data?.message || err.message));
+      alert(
+        "Failed to add job: " + (err.response?.data?.message || err.message)
+      );
       console.error("Error adding job:", err);
     }
   };
@@ -178,7 +204,7 @@ const FinanceAccounting = () => {
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-7xl">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-center">Manage Jobs</h3>
-          <button 
+          <button
             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
             onClick={openAddModal}
           >
@@ -187,50 +213,80 @@ const FinanceAccounting = () => {
         </div>
 
         {jobs.length === 0 && !isLoading ? (
-          <p className="text-center py-4">No jobs found. Add a new job to get started.</p>
+          <p className="text-center py-4">
+            No jobs found. Add a new job to get started.
+          </p>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full table-auto border-collapse border border-gray-300">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">Job Title</th>
-                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">Employment Type</th>
-                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">Key Skills</th>
-                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">Responsibilities</th>
-                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">Apply</th>
-                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">Actions</th>
+                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Job Title
+                    </th>
+                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Employment Type
+                    </th>
+                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Key Skills
+                    </th>
+                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Responsibilities
+                    </th>
+                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Apply
+                    </th>
+                    <th className="border border-gray-300 py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentJobs.map((job) => (
                     <tr key={job._id} className="border-b border-gray-300">
-                      <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">{job.jobTitle}</td>
-                      <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">{job.employmentType}</td>
                       <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
-                        {Array.isArray(job.keySkills) ? job.keySkills.join(", ") : ""}
+                        {job.jobTitle}
+                      </td>
+                      <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
+                        {job.employmentType}
+                      </td>
+                      <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
+                        {Array.isArray(job.keySkills)
+                          ? job.keySkills.join(", ")
+                          : ""}
                       </td>
                       <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
                         <ul className="list-disc ml-4">
-                          {Array.isArray(job.keyResponsibilities) ? 
-                            job.keyResponsibilities.map((resp, index) => (
-                              <li key={index}>{resp}</li>
-                            )) : 
-                            null
-                          }
+                          {Array.isArray(job.keyResponsibilities)
+                            ? job.keyResponsibilities.map((resp, index) => (
+                                <li key={index}>{resp}</li>
+                              ))
+                            : null}
                         </ul>
                       </td>
                       <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
-                        <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                        <a
+                          href={job.applyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
                           Apply Here
                         </a>
                       </td>
                       <td className="border border-gray-300 py-3 px-4 text-sm text-gray-800">
                         <div className="flex space-x-4">
-                          <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={() => openEditModal(job)}>
+                          <button
+                            className="bg-blue-500 text-white px-3 py-1 rounded"
+                            onClick={() => openEditModal(job)}
+                          >
                             Edit
                           </button>
-                          <button className="bg-red-500 text-white px-3 py-1 rounded" onClick={() => deleteJob(job._id)}>
+                          <button
+                            className="bg-red-500 text-white px-3 py-1 rounded"
+                            onClick={() => deleteJob(job._id)}
+                          >
                             Delete
                           </button>
                         </div>
@@ -244,9 +300,11 @@ const FinanceAccounting = () => {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-4 space-x-2">
-                <button 
-                  className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50" 
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} 
+                <button
+                  className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -254,9 +312,11 @@ const FinanceAccounting = () => {
                 <span className="px-4 py-2 bg-gray-100 rounded-md">
                   Page {currentPage} of {totalPages}
                 </span>
-                <button 
-                  className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50" 
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} 
+                <button
+                  className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -272,25 +332,61 @@ const FinanceAccounting = () => {
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h3 className="text-xl font-semibold mb-4">Edit Job</h3>
-            <input className="w-full p-2 border rounded mb-2" name="jobTitle" value={editingJob.jobTitle} onChange={handleEditChange} placeholder="Job Title" />
-            
-            <select 
-              className="w-full p-2 border rounded mb-2" 
-              name="employmentType" 
-              value={editingJob.employmentType} 
+            <input
+              className="w-full p-2 border rounded mb-2"
+              name="jobTitle"
+              value={editingJob.jobTitle}
+              onChange={handleEditChange}
+              placeholder="Job Title"
+            />
+
+            <select
+              className="w-full p-2 border rounded mb-2"
+              name="employmentType"
+              value={editingJob.employmentType}
               onChange={handleEditChange}
             >
-              {employmentTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
+              {employmentTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
-            
-            <input className="w-full p-2 border rounded mb-2" name="applyLink" value={editingJob.applyLink} onChange={handleEditChange} placeholder="Apply Link" />
-            <textarea className="w-full p-2 border rounded mb-2" name="keySkills" value={editingJob.keySkills} onChange={handleEditChange} placeholder="Key Skills (comma-separated)" />
-            <textarea className="w-full p-2 border rounded mb-2" name="keyResponsibilities" value={editingJob.keyResponsibilities} onChange={handleEditChange} placeholder="Responsibilities (one per line)" />
+
+            <input
+              className="w-full p-2 border rounded mb-2"
+              name="applyLink"
+              value={editingJob.applyLink}
+              onChange={handleEditChange}
+              placeholder="Apply Link"
+            />
+            <textarea
+              className="w-full p-2 border rounded mb-2"
+              name="keySkills"
+              value={editingJob.keySkills}
+              onChange={handleEditChange}
+              placeholder="Key Skills (comma-separated)"
+            />
+            <textarea
+              className="w-full p-2 border rounded mb-2"
+              name="keyResponsibilities"
+              value={editingJob.keyResponsibilities}
+              onChange={handleEditChange}
+              placeholder="Responsibilities (one per line)"
+            />
             <div className="flex justify-end space-x-4">
-              <button className="bg-green-500 text-white px-3 py-1 rounded" onClick={saveEdit}>Save</button>
-              <button className="bg-gray-500 text-white px-3 py-1 rounded" onClick={() => setEditModal(false)}>Cancel</button>
+              <button
+                className="bg-green-500 text-white px-3 py-1 rounded"
+                onClick={saveEdit}
+              >
+                Save
+              </button>
+              <button
+                className="bg-gray-500 text-white px-3 py-1 rounded"
+                onClick={() => setEditModal(false)}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -301,26 +397,66 @@ const FinanceAccounting = () => {
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h3 className="text-xl font-semibold mb-4">Add New Job</h3>
-            <input className="w-full p-2 border rounded mb-2" name="jobTitle" value={newJob.jobTitle} onChange={handleNewJobChange} placeholder="Job Title" required />
-            
-            <select 
-              className="w-full p-2 border rounded mb-2" 
-              name="employmentType" 
-              value={newJob.employmentType} 
+            <input
+              className="w-full p-2 border rounded mb-2"
+              name="jobTitle"
+              value={newJob.jobTitle}
+              onChange={handleNewJobChange}
+              placeholder="Job Title"
+              required
+            />
+
+            <select
+              className="w-full p-2 border rounded mb-2"
+              name="employmentType"
+              value={newJob.employmentType}
               onChange={handleNewJobChange}
               required
             >
-              {employmentTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
+              {employmentTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
-            
-            <input className="w-full p-2 border rounded mb-2" name="applyLink" value={newJob.applyLink} onChange={handleNewJobChange} placeholder="Apply Link" required />
-            <textarea className="w-full p-2 border rounded mb-2" name="keySkills" value={newJob.keySkills} onChange={handleNewJobChange} placeholder="Key Skills (comma-separated)" required />
-            <textarea className="w-full p-2 border rounded mb-2" name="keyResponsibilities" value={newJob.keyResponsibilities} onChange={handleNewJobChange} placeholder="Responsibilities (one per line)" required />
+
+            <input
+              className="w-full p-2 border rounded mb-2"
+              name="applyLink"
+              value={newJob.applyLink}
+              onChange={handleNewJobChange}
+              placeholder="Apply Link"
+              required
+            />
+            <textarea
+              className="w-full p-2 border rounded mb-2"
+              name="keySkills"
+              value={newJob.keySkills}
+              onChange={handleNewJobChange}
+              placeholder="Key Skills (comma-separated)"
+              required
+            />
+            <textarea
+              className="w-full p-2 border rounded mb-2"
+              name="keyResponsibilities"
+              value={newJob.keyResponsibilities}
+              onChange={handleNewJobChange}
+              placeholder="Responsibilities (one per line)"
+              required
+            />
             <div className="flex justify-end space-x-4">
-              <button className="bg-green-500 text-white px-3 py-1 rounded" onClick={addJob}>Add Job</button>
-              <button className="bg-gray-500 text-white px-3 py-1 rounded" onClick={() => setAddModal(false)}>Cancel</button>
+              <button
+                className="bg-green-500 text-white px-3 py-1 rounded"
+                onClick={addJob}
+              >
+                Add Job
+              </button>
+              <button
+                className="bg-gray-500 text-white px-3 py-1 rounded"
+                onClick={() => setAddModal(false)}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>

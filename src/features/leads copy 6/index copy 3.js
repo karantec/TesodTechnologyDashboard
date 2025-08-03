@@ -24,7 +24,7 @@ function ProductManager() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/product"
+        "https://backend.tesodtechnology.com/product"
       );
       setProducts(
         Array.isArray(response.data) ? response.data : [response.data]
@@ -38,9 +38,7 @@ function ProductManager() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `https://tesodtechnologyfinal.onrender.com/product/${id}`
-      );
+      await axios.delete(`https://backend.tesodtechnology.com/product/${id}`);
       setProducts(products.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Failed to delete product", err);
@@ -51,7 +49,7 @@ function ProductManager() {
     try {
       setIsSubmitting(true);
       await axios.post(
-        "https://tesodtechnologyfinal.onrender.com/product/create",
+        "https://backend.tesodtechnology.com/product/create",
         formData
       );
       setIsCreateModalOpen(false);
@@ -68,7 +66,7 @@ function ProductManager() {
     try {
       setIsSubmitting(true);
       await axios.put(
-        `https://tesodtechnologyfinal.onrender.com/product/${currentProductId}`,
+        `https://backend.tesodtechnology.com/product/${currentProductId}`,
         formData
       );
       setIsUpdateModalOpen(false);

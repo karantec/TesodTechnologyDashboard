@@ -19,7 +19,7 @@ function ServiceList() {
   const fetchServices = async () => {
     try {
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/services/"
+        "https://backend.tesodtechnology.com/services/"
       );
       setServices(
         Array.isArray(response.data) ? response.data : [response.data]
@@ -32,7 +32,7 @@ function ServiceList() {
   const handleDelete = async (serviceId) => {
     try {
       await axios.delete(
-        `https://tesodtechnologyfinal.onrender.com/services/${serviceId}`
+        `https://backend.tesodtechnology.com/services/${serviceId}`
       );
       setServices(services.filter((service) => service._id !== serviceId));
     } catch (err) {
@@ -47,7 +47,7 @@ function ServiceList() {
   const handleUpdate = async (values) => {
     try {
       await axios.put(
-        `https://tesodtechnologyfinal.onrender.com/services/${selectedService._id}`,
+        `http://localhost:8000/services/${selectedService._id}`,
         values
       );
       setSelectedService(null);
@@ -60,7 +60,7 @@ function ServiceList() {
   const handleCreate = async (values) => {
     try {
       await axios.post(
-        "https://tesodtechnologyfinal.onrender.com/services/createService",
+        "https://backend.tesodtechnology.com/services/createService",
         values
       );
       setIsCreateModalOpen(false);

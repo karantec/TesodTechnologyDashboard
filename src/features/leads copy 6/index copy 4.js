@@ -12,7 +12,7 @@ function InternshipForm() {
   const fetchInternshipData = async () => {
     try {
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/internship/internships"
+        "https://backend.tesodtechnology.com/internship/internships"
       );
       setInternshipData(
         Array.isArray(response.data) ? response.data : [response.data]

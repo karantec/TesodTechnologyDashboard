@@ -23,7 +23,7 @@ const ViewCrousel = () => {
   const fetchCrouselItems = async () => {
     try {
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/crousel"
+        "https://backend.tesodtechnology.com/crousel"
       );
       setCrouselItems(response.data);
     } catch (err) {
@@ -36,12 +36,12 @@ const ViewCrousel = () => {
     try {
       if (isEditMode) {
         await axios.put(
-          `https://tesodtechnologyfinal.onrender.com/crousel/${editId}`,
+          `https://backend.tesodtechnology.com/crousel/${editId}`,
           formData
         );
       } else {
         await axios.post(
-          "https://tesodtechnologyfinal.onrender.com/crousel/create",
+          "https://backend.tesodtechnology.com/crousel/create",
           formData
         );
       }
@@ -56,9 +56,7 @@ const ViewCrousel = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `https://tesodtechnologyfinal.onrender.com/crousel/${id}`
-      );
+      await axios.delete(`https://backend.tesodtechnology.com/crousel/${id}`);
       fetchCrouselItems();
     } catch (err) {
       setError("Failed to delete item");

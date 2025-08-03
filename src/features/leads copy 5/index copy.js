@@ -24,7 +24,7 @@ const ViewTeam = () => {
   const fetchTeamMembers = async () => {
     try {
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/teams/Team"
+        "https://backend.tesodtechnology.com/teams/Team"
       );
       setTeamMembers(response.data);
     } catch (err) {
@@ -37,12 +37,12 @@ const ViewTeam = () => {
     try {
       if (isEditMode) {
         await axios.put(
-          `https://tesodtechnologyfinal.onrender.com/teams/Team/${editId}`,
+          `https://backend.tesodtechnology.com/teams/Team/${editId}`,
           formData
         );
       } else {
         await axios.post(
-          "https://tesodtechnologyfinal.onrender.com/teams/creatTeam",
+          "https://backend.tesodtechnology.com/teams/creatTeam",
           formData
         );
       }
@@ -58,7 +58,7 @@ const ViewTeam = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://tesodtechnologyfinal.onrender.com/teams/Team/${id}`
+        `https://backend.tesodtechnology.com/teams/Team/${id}`
       );
       fetchTeamMembers();
     } catch (err) {

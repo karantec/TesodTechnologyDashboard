@@ -20,7 +20,7 @@ function ServiceList() {
   const fetchServices = async () => {
     try {
       const response = await axios.get(
-        "https://tesodtechnologyfinal.onrender.com/product"
+        "https://backend.tesodtechnology.com/product"
       );
       setServices(
         Array.isArray(response.data) ? response.data : [response.data]
@@ -33,7 +33,7 @@ function ServiceList() {
   const handleDelete = async (serviceId) => {
     try {
       await axios.delete(
-        `https://tesodtechnologyfinal.onrender.com/product/${serviceId}`
+        `https://backend.tesodtechnology.com/product/${serviceId}`
       );
       setServices(services.filter((service) => service._id !== serviceId));
     } catch (err) {
@@ -57,7 +57,7 @@ function ServiceList() {
       }
 
       await axios.put(
-        `https://tesodtechnologyfinal.onrender.com/product/${selectedService._id}`,
+        `https://backend.tesodtechnology.com/product/${selectedService._id}`,
         updateData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -81,7 +81,7 @@ function ServiceList() {
       createData.append("image", values.image);
 
       await axios.post(
-        "https://tesodtechnologyfinal.onrender.com/product/create",
+        "https://backend.tesodtechnology.com/product/create",
         createData,
         {
           headers: { "Content-Type": "multipart/form-data" },

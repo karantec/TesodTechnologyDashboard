@@ -12,7 +12,9 @@ const CarrierAccounting = () => {
 
   const fetchResumes = async () => {
     try {
-      const response = await axios.get("https://tesodtechnologyfinal.onrender.com/resume/resume");
+      const response = await axios.get(
+        "https://backend.tesodtechnology.com/resume/resume"
+      );
       setResumes(response.data);
     } catch (err) {
       setError("Failed to fetch resumes");
@@ -32,24 +34,51 @@ const CarrierAccounting = () => {
           <table className="w-full table-auto border-collapse border border-gray-300">
             <thead className="bg-gray-100">
               <tr>
-                <th className="border border-gray-300 py-3 px-4 text-left">Name</th>
-                <th className="border border-gray-300 py-3 px-4 text-left">Email</th>
-                <th className="border border-gray-300 py-3 px-4 text-left">Phone</th>
-                <th className="border border-gray-300 py-3 px-4 text-left">Position</th>
-                <th className="border border-gray-300 py-3 px-4 text-left">Applied Date</th>
-                <th className="border border-gray-300 py-3 px-4 text-left">Resume</th>
+                <th className="border border-gray-300 py-3 px-4 text-left">
+                  Name
+                </th>
+                <th className="border border-gray-300 py-3 px-4 text-left">
+                  Email
+                </th>
+                <th className="border border-gray-300 py-3 px-4 text-left">
+                  Phone
+                </th>
+                <th className="border border-gray-300 py-3 px-4 text-left">
+                  Position
+                </th>
+                <th className="border border-gray-300 py-3 px-4 text-left">
+                  Applied Date
+                </th>
+                <th className="border border-gray-300 py-3 px-4 text-left">
+                  Resume
+                </th>
               </tr>
             </thead>
             <tbody>
               {resumes.map((resume) => (
                 <tr key={resume._id} className="border-b border-gray-300">
-                  <td className="border border-gray-300 py-3 px-4">{resume.name}</td>
-                  <td className="border border-gray-300 py-3 px-4">{resume.email}</td>
-                  <td className="border border-gray-300 py-3 px-4">{resume.phone}</td>
-                  <td className="border border-gray-300 py-3 px-4">{resume.position}</td>
-                  <td className="border border-gray-300 py-3 px-4">{new Date(resume.appliedAt).toLocaleDateString()}</td>
                   <td className="border border-gray-300 py-3 px-4">
-                    <a href={resume.resumeLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    {resume.name}
+                  </td>
+                  <td className="border border-gray-300 py-3 px-4">
+                    {resume.email}
+                  </td>
+                  <td className="border border-gray-300 py-3 px-4">
+                    {resume.phone}
+                  </td>
+                  <td className="border border-gray-300 py-3 px-4">
+                    {resume.position}
+                  </td>
+                  <td className="border border-gray-300 py-3 px-4">
+                    {new Date(resume.appliedAt).toLocaleDateString()}
+                  </td>
+                  <td className="border border-gray-300 py-3 px-4">
+                    <a
+                      href={resume.resumeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline"
+                    >
                       View Resume
                     </a>
                   </td>
